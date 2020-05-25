@@ -1,50 +1,49 @@
-﻿using Smod2;
-using Smod2.Attributes;
-using Smod2.Config;
-using Smod2.Lang;
+﻿using EXILED;
+using EXILED.Patches;
 
 namespace LockdownUltimate
 {
-	[PluginDetails(
-		author = "RogerFK",
-		name = "Pro 079 Lockdown",
-		description = "Lockdown ultimate for Pro-079.",
-		id = "rogerfk.pro079.lockdown",
-		version = "2.0",
-		configPrefix = "p079_lockdown",
-		langFile = "p079lockdown",
-		SmodMajor = 3,
-		SmodMinor = 5,
-		SmodRevision = 0
-		)]
-
 	public class LockdownPlugin : Plugin
 	{
+		public LockdownUltimate LockdownUltimate;
 		public override void OnDisable()
 		{
-			Info("Pro079 Lockdown disabled.");
+			Events.DoorInteractEvent -= LockdownUltimate.OnDoorAccess;
+			Events.WaitingForPlayersEvent -= LockdownUltimate.OnWaitingForPlayers;
+			LockdownUltimate = null;
+			Log.Info("Pro079 Lockdown disabled.");
 		}
 		public override void OnEnable()
 		{
-			Info("Pro079 Lockdown enabled");
-		}
-		[ConfigOption]
-		public readonly bool enable = true;
-		[ConfigOption]
-		public readonly int time = 60;
-		[ConfigOption]
-		public readonly int cooldown = 180;
-		[ConfigOption]
-		public readonly int cost = 50;
-        [LangOption]
-        public readonly string lockdownInfo = "makes humans unable to open doors that require a keycard, but SCPs can open any";
-        public override void Register()
-		{
-			Info("Loading Pro-079 Chaos configs and registering the command...");
+			LoadConfigs();
+			if (!enable)
+				return;
 
-			LockdownUltimate reference = new LockdownUltimate(this);
-			AddEventHandlers(reference);
-			Pro079Core.Pro079Manager.Manager.RegisterUltimate(reference);
+			LockdownUltimate = new LockdownUltimate(this);
+			Events.DoorInteractEvent += LockdownUltimate.OnDoorAccess;
+			Events.WaitingForPlayersEvent += LockdownUltimate.OnWaitingForPlayers;	
+			Pro079Core.Pro079Manager.Manager.RegisterUltimate(LockdownUltimate);
+			Log.Info("Pro079 Lockdown enabled");
 		}
+
+		public bool enable;
+		public int time;
+		public int cooldown;
+		public int cost;
+		public void LoadConfigs()
+		{
+			enable = Config.GetBool("p079_lockdown_enable", true);
+			time = Config.GetInt("p079_lockdown_time", 60);
+			cooldown = Config.GetInt("p079_lockdown_cooldown", 180);
+			cost = Config.GetInt("p079_lockdown_cost", 50);
+		}
+
+        public readonly string lockdownInfo = "makes humans unable to open doors that require a keycard, but SCPs can open any";
+        public override void OnReload()
+		{
+
+		}
+
+		public override string getName => "Pro079.Ultimates.Lockdown";
 	}
 }

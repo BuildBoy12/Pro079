@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using EXILED;
+using EXILED.Extensions;
 using Pro079Core.API;
-using Smod2;
-using Smod2.API;
 
 namespace Pro079Core
 {
@@ -15,24 +15,24 @@ namespace Pro079Core
 			this.plugin = plugin;
 			Manager = this;
 		}
-		private int CassieCd = 0;
+		public int CassieCd = 0;
 		/// <summary>
 		/// The remaining seconds for CASSIE to be active.
 		/// </summary>
 		public int CassieCooldown
 		{
 			// The logic demands a high IQ or a lot of knowledge in C# to be understood.
-			set => CassieCd = PluginManager.Manager.Server.Round.Duration + value;
+			set => CassieCd = RoundSummary.roundTime + value;
 			get
 			{
-				int cd = CassieCd - PluginManager.Manager.Server.Round.Duration;
+				int cd = CassieCd - RoundSummary.roundTime;
 				return cd <= 0 ? 0 : cd;
 			}
 		}
 		/// <summary>
 		/// Dictionary with all the Commands and their respective handlers
 		/// </summary>
-		public readonly Dictionary<string, ICommand079> Commands = new Dictionary<string, ICommand079>();
+		public Dictionary<string, ICommand079> Commands = new Dictionary<string, ICommand079>();
 		/// <summary>
 		/// Function used to register the current command. Doesn't register EventHandlers, so be aware of that.
 		/// </summary>
@@ -54,7 +54,7 @@ namespace Pro079Core
 		/// <summary>
 		/// Dictionary with all the Ultimates and their respective handlers
 		/// </summary>
-		public readonly Dictionary<string, IUltimate079> Ultimates = new Dictionary<string, IUltimate079>();
+		public Dictionary<string, IUltimate079> Ultimates = new Dictionary<string, IUltimate079>();
 		/// <summary>
 		/// Function used to register the current command. Doesn't register EventHandlers, so be aware of that.
 		/// </summary>
@@ -84,7 +84,7 @@ namespace Pro079Core
 		{
 			if (CustomValue > -1)
 			{
-				Command.CurrentCooldown = PluginManager.Manager.Server.Round.Duration + CustomValue;
+				Command.CurrentCooldown = RoundSummary.roundTime + CustomValue;
 				if (!string.IsNullOrEmpty(Command.CommandReady))
 				{
 					int p = (int)System.Environment.OSVersion.Platform;
@@ -94,7 +94,7 @@ namespace Pro079Core
 			}
 			else
 			{
-				Command.CurrentCooldown = PluginManager.Manager.Server.Round.Duration + Command.Cooldown;
+				Command.CurrentCooldown = RoundSummary.roundTime + Command.Cooldown;
 				if (!string.IsNullOrEmpty(Command.CommandReady))
 				{
 					int p = (int)System.Environment.OSVersion.Platform;
@@ -104,23 +104,23 @@ namespace Pro079Core
 			}
 
 		}
-		private int UltCooldown = 0;
+		public int UltCooldown = 0;
 		/// <summary>
 		/// Remaining seconds for the ultimates to be ready, in seconds. 0 means it has no cooldown
 		/// </summary>
 		public int UltimateCooldown
 		{
 			// The logic demands a high IQ or a lot of knowledge in C# to be understood.
-			set => UltCooldown = PluginManager.Manager.Server.Round.Duration + value;
+			set => UltCooldown = RoundSummary.roundTime + value;
 			get
 			{
-				int cd = UltCooldown - PluginManager.Manager.Server.Round.Duration;
+				int cd = UltCooldown - RoundSummary.roundTime;
 				return cd <= 0 ? 0 : cd;
 			}
 		}
 		public void SetOnCooldown(IUltimate079 Ultimate)
 		{
-			UltimateCooldown = Ultimate.Cooldown + PluginManager.Manager.Server.Round.Duration;
+			UltimateCooldown = Ultimate.Cooldown + RoundSummary.roundTime;
 
 			if (!string.IsNullOrEmpty(plugin.ultready) || plugin.ultready == "disable" || plugin.ultready == "disabled" || plugin.ultready == "none" || plugin.ultready == "null")
 			{
@@ -132,29 +132,27 @@ namespace Pro079Core
 		private IEnumerator<float> DelayMessage(string message, int delay)
 		{
 			yield return MEC.Timing.WaitForSeconds(delay);
-			List<Player> pcs = PluginManager.Manager.Server.GetPlayers(Role.SCP_079);
-			foreach (Player pc in pcs) pc.PersonalBroadcast(6, message, false);
+			IEnumerable<ReferenceHub> pcs = Player.GetHubs(RoleType.Scp079);
+			foreach (ReferenceHub pc in pcs) pc.Broadcast(6, message, false);
 		}
 		/// <summary>
 		/// Properly gives the player XP. Must be done per-command.
 		/// </summary>
 		/// <param name="player">The player to give XP to</param>
 		/// <param name="XP">The amount of XP</param>
-		/// <param name="xptype">The experience type you want to show the player (optional)</param>
-		public void GiveExp(Player player, float XP, ExperienceType xptype = (ExperienceType)(-1))
+		public void GiveExp(ReferenceHub player, float XP)
 		{
-			player.Scp079Data.Exp += XP;
-			if (xptype != (ExperienceType)(-1)) player.Scp079Data.ShowGainExp(xptype);
+			player.AddExperience(XP);
 		}
 		/// <summary>
 		/// Drains the AP from a player. Will never go below 0. Negative amounts probably add AP instead of draining it.
 		/// </summary>
 		/// <param name="player"></param>
 		/// <param name="amount"></param>
-		public void DrainAP(Player player, float amount)
+		public void DrainAP(ReferenceHub player, float amount)
 		{
-			if (player.Scp079Data.AP < amount) player.Scp079Data.AP = 0;
-			else player.Scp079Data.AP -= amount;
+			if (player.GetEnergy() < amount) player.SetEnergy(0);
+			else player.SetEnergy(player.GetEnergy() - amount);
 		}
 		/// <summary>
 		/// Gets the ultimate based on the name or based on how it starts.

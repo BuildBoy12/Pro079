@@ -1,14 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using EXILED;
+using EXILED.Extensions;
 using Pro079Core.API;
-using Smod2;
-using Smod2.API;
-using Smod2.EventHandlers;
-using Smod2.Events;
 
 namespace BlackoutUltimate
 {
-	internal class BlackoutLogic : IEventHandlerWaitingForPlayers, IUltimate079
+	internal class BlackoutLogic : IUltimate079
 	{
 		private readonly BlackoutUltimate plugin;
 		public BlackoutLogic(BlackoutUltimate plugin)
@@ -23,14 +21,14 @@ namespace BlackoutUltimate
 
 		public int Cost => plugin.cost;
 
-		public Room[] Rooms { get; private set; }
+		//public Room[] Rooms { get; private set; }
 
-		public void OnWaitingForPlayers(WaitingForPlayersEvent ev)
+		/*public void OnWaitingForPlayers()
 		{
 			Rooms = PluginManager.Manager.Server.Map.Get079InteractionRooms(Scp079InteractionType.CAMERA).Where(r => r.ZoneType != ZoneType.ENTRANCE).ToArray();
-		}
+		}*/
 
-		public string TriggerUltimate(string[] args, Player Player)
+		public string TriggerUltimate(string[] args, ReferenceHub Player)
 		{
 			int p = (int)System.Environment.OSVersion.Platform;
 			if ((p == 4) || (p == 6) || (p == 128)) MEC.Timing.RunCoroutine(ShutDownLights(), MEC.Segment.Update);
@@ -40,17 +38,18 @@ namespace BlackoutUltimate
 
 		private IEnumerator<float> ShutDownLights()
 		{
-			PluginManager.Manager.Server.Map.AnnounceCustomMessage("warning . malfunction detected on heavy containment zone . Scp079Recon6 . . . light systems Disengaged");
+			PlayerManager.localPlayer.GetComponent<MTFRespawn>().RpcPlayCustomAnnouncement("warning . malfunction detected on heavy containment zone . Scp079Recon6 . . . light systems Disengaged", false, true);
 			yield return MEC.Timing.WaitForSeconds(12.1f);
-			float start = PluginManager.Manager.Server.Round.Duration;
-			while (start + plugin.minutes * 60f > PluginManager.Manager.Server.Round.Duration)
+			/*float start = RoundSummary.roundTime;
+			while (start + plugin.minutes * 60f > RoundSummary.roundTime)
 			{
 				foreach (var room in Rooms)
 				{
 					room.FlickerLights();
 				}
 				yield return MEC.Timing.WaitForSeconds(8f);
-			}
+			}*/
+			Map.TurnOffAllLights(plugin.minutes * 60f, false);
 		}
 	}
 }

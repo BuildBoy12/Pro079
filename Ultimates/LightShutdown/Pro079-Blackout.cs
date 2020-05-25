@@ -1,50 +1,48 @@
-﻿using Smod2;
-using Smod2.Attributes;
-using Smod2.Config;
-using Smod2.Lang;
+﻿using EXILED;
 
 namespace BlackoutUltimate
 {
-	[PluginDetails(
-		author = "RogerFK",
-		name = "Pro 079 Blackout",
-		description = "Blackout ultimate for Pro-079.",
-		id = "rogerfk.pro079.blackout",
-		version = "2.0",
-		configPrefix = "p079_blackout",
-		langFile = "p079blackout",
-		SmodMajor = 3,
-		SmodMinor = 5,
-		SmodRevision = 0
-		)]
-
 	public class BlackoutUltimate : Plugin
 	{
+		BlackoutLogic BlackoutLogic;
+
+		public bool enable;
+		public int cooldown;
+		public int minutes;
+		public int cost;
+
 		public override void OnDisable()
 		{
-			Info("Pro079 Blackout disabled.");
+			BlackoutLogic = null;
+			Log.Info("Pro079 Blackout disabled.");
 		}
 		public override void OnEnable()
 		{
-			Info("Pro079 Blackout enabled");
+			ReloadConfigs();
+			if (!enable)
+				return;
+
+			BlackoutLogic = new BlackoutLogic(this);
+			Pro079Core.Pro079.Manager.RegisterUltimate(BlackoutLogic);
+			Log.Info("Pro079 Blackout enabled");
 		}
-		[ConfigOption]
-		public readonly bool enable = true;
-		[ConfigOption]
-		public readonly int cooldown = 180;
-		[ConfigOption]
-		public readonly int minutes = 1;
-		[ConfigOption]
-		public readonly int cost = 50;
-		[LangOption]
+		
+		public void ReloadConfigs()
+		{
+			enable = Config.GetBool("p079_blackout_enable", true);
+			cooldown = Config.GetInt("p079_blackout_cooldown", 180);
+			minutes = Config.GetInt("p079_blackout_minutes", 1);
+			cost = Config.GetInt("p079_blackout_cost", 50);
+		}
+
+		//LangOptions
 		public readonly string p0blackoutinfo = "Shuts the facility down for {min} minute$";
 
-		public override void Register()
+		public override void OnReload()
 		{
-			BlackoutLogic reference = new BlackoutLogic(this);
-			AddEventHandlers(reference);
-			Pro079Core.Pro079.Manager.RegisterUltimate(reference);
-			Info("Registed Pro-079 Blackout.");
+			
 		}
+
+		public override string getName => "Pro079.Ultimates.Blackout";
 	}
 }

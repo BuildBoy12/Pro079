@@ -1,7 +1,6 @@
-﻿using Pro079Core;
+﻿using EXILED.Extensions;
+using Pro079Core;
 using Pro079Core.API;
-using Smod2;
-using Smod2.API;
 
 namespace GeneratorCommand
 {
@@ -38,7 +37,7 @@ namespace GeneratorCommand
 
 		public int CurrentCooldown { get; set; }
 
-		public string CallCommand(string[] args, Player player, CommandOutput output)
+		public string CallCommand(string[] args, ReferenceHub player, CommandOutput output)
 		{
 			int blackcost = plugin.cost + plugin.costBlackout;
 			if(args.Length == 0)
@@ -52,18 +51,18 @@ namespace GeneratorCommand
 				case "2":
 				case "3":
 				case "4":
-					PluginManager.Manager.Server.Map.AnnounceCustomMessage("Scp079Recon" + args[0]);
-					Pro079.Manager.GiveExp(player, 20f, ExperienceType.CHEAT);
+					PlayerManager.localPlayer.GetComponent<MTFRespawn>().RpcPlayCustomAnnouncement("Scp079Recon" + args[0], false, true);
+					Pro079.Manager.GiveExp(player, 20f);
 					return Pro079.Configs.CommandSuccess;
 				case "5":
 					if (!player.GetBypassMode())
 					{
-						if (player.Scp079Data.Level < plugin.levelBlackout - 1)
+						if (player.GetLevel() < plugin.levelBlackout - 1)
 						{
 							output.Success = false;
 							return Pro079.Configs.LowLevel(plugin.levelBlackout);
 						}
-						if (player.Scp079Data.AP < blackcost)
+						if (player.GetEnergy() < blackcost)
 						{
 							output.Success = false;
 							return Pro079.Configs.LowAP(blackcost);
@@ -71,19 +70,19 @@ namespace GeneratorCommand
 						Pro079.Manager.DrainAP(player, plugin.costBlackout);
 					}
 					MEC.Timing.RunCoroutine(Pro079Logic.Fake5Gens(), MEC.Segment.FixedUpdate);
-					Pro079.Manager.GiveExp(player, 80f, ExperienceType.CHEAT);
+					Pro079.Manager.GiveExp(player, 80f);
 					Pro079.Manager.DrainAP(player, blackcost);
 					Pro079.Manager.SetOnCooldown(this, 70 + plugin.penalty + plugin.cooldown);
 					return plugin.gen5msg;
 				case "6":
 					if (!player.GetBypassMode())
 					{
-						if (player.Scp079Data.Level < plugin.levelBlackout - 1)
+						if (player.GetLevel() < plugin.levelBlackout - 1)
 						{
 							output.Success = false;
 							return Pro079.Configs.LowLevel(plugin.levelBlackout);
 						}
-						if (player.Scp079Data.AP < blackcost)
+						if (player.GetEnergy() < blackcost)
 						{
 							output.Success = false;
 							return Pro079.Configs.LowAP(blackcost);
@@ -91,7 +90,7 @@ namespace GeneratorCommand
 						Pro079.Manager.DrainAP(player, plugin.costBlackout);
 					}
 					MEC.Timing.RunCoroutine(Pro079Logic.SixthGen(), MEC.Segment.FixedUpdate);
-					Pro079.Manager.GiveExp(player, 50f, ExperienceType.CHEAT);
+					Pro079.Manager.GiveExp(player, 50f);
 					Pro079.Manager.DrainAP(player, blackcost);
 					Pro079.Manager.SetOnCooldown(this, plugin.penalty + plugin.cooldown);
 					return plugin.gen5msg;

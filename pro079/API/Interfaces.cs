@@ -1,7 +1,4 @@
-﻿using Smod2;
-using Smod2.API;
-
-namespace Pro079Core.API
+﻿namespace Pro079Core.API
 {
 	public interface ICommand079
 	{
@@ -35,7 +32,7 @@ namespace Pro079Core.API
 		/// <param name="args">Array of strings with the extra arguments. Sometimes, it's not needed.</param>
 		/// <param name="Player">Player who sent the command. This player contains the <see cref="Scp079Data"/> in case you want to modify anything about it.</param>
 		/// <returns>The string to be returned to the Player's console.</returns>
-		string CallCommand(string[] args, Smod2.API.Player Player, CommandOutput Output);
+		string CallCommand(string[] args, ReferenceHub Player, CommandOutput Output);
 		/// <summary>
 		/// If it uses C.A.S.S.I.E. cooldowns, and sets it on cooldown or not. Optional.
 		/// </summary>
@@ -88,6 +85,6 @@ namespace Pro079Core.API
 		/// <param name="args"></param>
 		/// <param name="Player"></param>
 		/// <returns></returns>
-		string TriggerUltimate(string[] args, Smod2.API.Player Player);
+		string TriggerUltimate(string[] args, ReferenceHub Player);
 	}
 }

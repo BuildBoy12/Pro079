@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using EXILED.Extensions;
 using Pro079Core.API;
-using Smod2;
-using Smod2.API;
 
 namespace SCPCommand
 {
@@ -13,11 +12,8 @@ namespace SCPCommand
 		{
 			this.plugin = plugin;
 		}
-        Role[] mtf = new Role[]
-        {
-            Role.FACILITY_GUARD, Role.NTF_CADET, Role.NTF_LIEUTENANT, Role.NTF_SCIENTIST, Role.NTF_COMMANDER, Role.SCIENTIST
-        };
-        public bool OverrideDisable = false;
+
+		public bool OverrideDisable = false;
 		public bool Disabled
 		{
 			get => OverrideDisable ? OverrideDisable : !plugin.enable;
@@ -41,17 +37,8 @@ namespace SCPCommand
 		public string CommandReady => plugin.scpready;
 
 		public int CurrentCooldown { get; set; }
-        private string SpaceTheScp(string scp)
-        {
-            int length = scp.Length * 2 - 1;
-            char[] spacedScp = new char[length];
-            for(int i = 0; i < length; i++)
-            {
-                spacedScp[i] = (i % 2 == 0) ? scp[i/2] : ' ';
-            }
-            return new string(spacedScp);
-        }
-		public string CallCommand(string[] args, Player player, CommandOutput output)
+
+		public string CallCommand(string[] args, ReferenceHub player, CommandOutput output)
 		{
 			if (args.Length < 2)
 			{
@@ -59,34 +46,50 @@ namespace SCPCommand
 				return plugin.scpuse.Replace("$min", plugin.cost.ToString());
 			}
 
-			if (!plugin.GetConfigList("p079_scp_list").Contains(args[0]))
+			/*if (!plugin.GetConfigList("p079_scp_list").Contains(args[1]))
 			{
 				output.Success = false;
 				return plugin.scpexist + " - " + plugin.scpuse.Replace("$min", plugin.cost.ToString());
-			}
+			}*/
+			string scpNum = string.Join(" ", args[1].ToCharArray());
 			switch (args[1])
 			{
 				case "mtf":
-                    Player dummy = PluginManager.Manager.Server.GetPlayers(mtf).FirstOrDefault();
+					ReferenceHub dummy = null;
+					foreach (ReferenceHub ply in Player.GetHubs())
+					{
+						if (ply.GetTeam() == Team.MTF)
+						{
+							dummy = ply;
+							break;
+						}
+					}
 					if (dummy == null)
 					{
 						player.SendConsoleMessage(plugin.scpnomtfleft, "red");
 					}
-					PluginManager.Manager.Server.Map.AnnounceScpKill(args[0], dummy);
+					
+					//PlayerManager.localPlayer.GetComponent<MTFRespawn>().RpcPlayCustomAnnouncement(args[0], dummy);
 					break;
-				case "unknown":
-					PluginManager.Manager.Server.Map.AnnounceScpKill(args[0], null);
+				case "classd":
+					PlayerManager.localPlayer.GetComponent<MTFRespawn>().RpcPlayCustomAnnouncement("scp " + scpNum + " terminated by ClassD personnel", false, true);
+					break;
+				case "scientist":
+					PlayerManager.localPlayer.GetComponent<MTFRespawn>().RpcPlayCustomAnnouncement("scp " + scpNum + " terminated by science personnel", false, true);
+					break;
+				case "chaos":
+					PlayerManager.localPlayer.GetComponent<MTFRespawn>().RpcPlayCustomAnnouncement("scp " + scpNum + " terminated by ChaosInsurgency", false, true);
 					break;
 				case "tesla":
-					PluginManager.Manager.Server.Map.AnnounceCustomMessage($"scp {SpaceTheScp(args[0])} Successfully Terminated by automatic security system");
+					PlayerManager.localPlayer.GetComponent<MTFRespawn>().RpcPlayCustomAnnouncement("scp " + scpNum + " Successfully Terminated by automatic security system", false, true);
 					break;
 				case "decont":
-					PluginManager.Manager.Server.Map.AnnounceCustomMessage($"scp {SpaceTheScp(args[0])} Lost in Decontamination Sequence");
+					PlayerManager.localPlayer.GetComponent<MTFRespawn>().RpcPlayCustomAnnouncement("scp " + scpNum + " Lost in Decontamination Sequence", false, true);
 					break;
 				default:
-					return plugin.scpway + " .079 scp " + args[0] + " (unknown/tesla/mtf/decont)";
+					return plugin.scpway + " .079 scp " + args[0] + " (classd/scientist/chaos/tesla/mtf/decont)";
 			}
-			Pro079Core.Pro079.Manager.GiveExp(player, 5 * (player.Scp079Data.Level + 1), ExperienceType.CHEAT);
+			Pro079Core.Pro079.Manager.GiveExp(player, 5 * (player.GetLevel() + 1));
 			return Pro079Core.Pro079.Configs.CommandSuccess;
 		}
 	}

@@ -1,108 +1,87 @@
-﻿using Smod2;
-using Smod2.Attributes;
-using Smod2.Config;
-using Smod2.Lang;
+﻿using EXILED;
 using Pro079Core;
 
 namespace InfoCommand
 {
-	[PluginDetails(
-		author = "RogerFK",
-		name = "Pro 079 Info",
-		description = "Info command for Pro-079.",
-		id = "rogerfk.pro079.info",
-		version = "2.0",
-		configPrefix = "p079_info",
-		langFile = "p079info",
-		SmodMajor = 3,
-		SmodMinor = 5,
-		SmodRevision = 0
-		)]
-
 	public class InfoPlugin : Plugin
 	{
+		public InfoCommand InfoCommand;
+
+		public bool enable = true;
+		public int alive = 1;
+		public int decont = 2;
+		public int escaped = 2;
+		public int plebs = 2;
+		public int mtfci = 3;
+		public int gens = 1;
+		public int mtfest = 3;
+		public bool mtfop = true;
+		public bool longTime = true;
+		public string color = "red";
+
 		public override void OnDisable()
 		{
-			Info("Pro079 Info disabled.");
+			Events.TeamRespawnEvent -= InfoCommand.OnTeamRespawn;
+			Events.WaitingForPlayersEvent -= InfoCommand.OnWaitingForPlayers;
+			Log.Info("Pro079 Info disabled.");
 		}
 		public override void OnEnable()
 		{
-			Info("Pro079 Info enabled.");
-		}
-		[ConfigOption]
-		public readonly bool enable = true;
-		[ConfigOption]
-		public readonly int alive = 1;
-		[ConfigOption]
-		public readonly int decont = 2;
-		[ConfigOption]
-		public readonly int escaped = 2;
-		[ConfigOption]
-		public readonly int plebs = 2;
-		[ConfigOption]
-		public readonly int mtfci = 3;
-		[ConfigOption]
-		public readonly int gens = 1;
-		[ConfigOption]
-		public readonly int mtfest = 3;
-		[ConfigOption]
-		public readonly bool mtfop = true;
-		[ConfigOption]
-		public readonly bool longTime = true;
-		[ConfigOption]
-		public readonly string color = "red";
+			ReloadConfigs();
+			if (!enable)
+				return;
 
-		[LangOption]
+			Events.TeamRespawnEvent += InfoCommand.OnTeamRespawn;
+			Events.WaitingForPlayersEvent += InfoCommand.OnWaitingForPlayers;
+			InfoCommand reference = new InfoCommand(this);
+			Pro079.Manager.RegisterCommand(reference);
+			Log.Info("Pro079 Info enabled.");
+		}
+
+		public void ReloadConfigs()
+		{
+			enable = Config.GetBool("p079_info_enable", true);
+			alive = Config.GetInt("p079_info_alive", 1);
+			decont = Config.GetInt("p079_info_decont", 2);
+			escaped = Config.GetInt("p079_info_escaped", 2);
+			plebs = Config.GetInt("p079_info_plebs", 2);
+			mtfci = Config.GetInt("p079_info_mtfci", 3);
+			gens = Config.GetInt("p079_info_gens", 1);
+			mtfest = Config.GetInt("p079_info_mtfest", 3);
+			mtfop = Config.GetBool("p079_info_mtfop", true);
+			longTime = Config.GetBool("p079_info_time", true);
+			color = Config.GetString("p079_info_color", "red");
+		}
+
+		//Language Options
 		public readonly string infocmd = "info";
-		[LangOption]
 		public readonly string decontdisabled = "Decontamination is disabled";
-		[LangOption]
 		public readonly string deconthappened = "LCZ is decontaminated";
-		[LangOption]
 		public readonly string decontbug = "should have happened";
-		[LangOption]
 		public readonly string mtfRespawn = "in $time";
-		[LangOption]
 		public readonly string mtfest0 = "between $(min)s and $(max)s";
-		[LangOption]
 		public readonly string mtfest1 = "less than $(max)";
-		[LangOption]
 		public readonly string mtfest2 = "are respawning / should have already respawned";
-		[LangOption]
 		public readonly string infomsg = "SCP alive: $scpalive\\nHumans alive: $humans | Next MTF/Chaos: $estMTF\\nTime until decontamination: $decont\\nEscaped Class Ds:  $cdesc | Escaped scientists:    $sciesc\\nAlive Class-Ds:    $cdalive | Alive chaos:           $cialive\\nAlive scientists:  $scialive | Alive MTFs:            $mtfalive";
-		[LangOption]
 		public readonly string lockeduntil = "Locked until level $lvl";
-		[LangOption]
 		public readonly string generators = "Generators:";
-		[LangOption]
 		public readonly string generatorin = "$room's generator";
-		[LangOption]
 		public readonly string activated = "is activated.";
-		[LangOption]
 		public readonly string hastablet = "has a tablet";
-		[LangOption]
 		public readonly string notablet = "doesn't have a tablet";
-		[LangOption]
 		public readonly string timeleft = "and has $secs remaining";
-		[LangOption]
 		public readonly string infoextrahelp = "Shows stuff about the facility";
-		[LangOption]
 		public readonly string iminutes = "minute$";
-		[LangOption]
 		public readonly string iseconds = "second$";
-		[LangOption]
 		public readonly string iand = "and";
 		// I think this thing fucks germans and others.
-		[LangOption]
 		public readonly string pluralSuffix = "s";
 
-		public override void Register()
+		public override void OnReload()
 		{
-			Info("Loading Pro-079 Tesla configs and registering the command...");
-
-			InfoCommand reference = new InfoCommand(this);
-			AddEventHandlers(reference);
-			Pro079.Manager.RegisterCommand(reference);
+			
 		}
+
+		public override string getName => "Pro079.Info";
 	}
 }

@@ -1,15 +1,12 @@
 ﻿using System;
 using Pro079Core;
 using Pro079Core.API;
-using Smod2;
-using Smod2.API;
-using Smod2.EventHandlers;
-using Smod2.Events;
-using Smod2.EventSystem.Events;
+using EXILED;
+using EXILED.Extensions;
 
 namespace InfoCommand
 {
-	internal class InfoCommand : IEventHandlerTeamRespawn, IEventHandlerSetConfig, ICommand079
+	public class InfoCommand : ICommand079
 	{
 		private int LastMtfSpawn;
 		private readonly InfoPlugin plugin;
@@ -52,10 +49,10 @@ namespace InfoCommand
 			set => _ = value;
 		}
 
-		public string CallCommand(string[] args, Player player, CommandOutput output)
+		public string CallCommand(string[] args, ReferenceHub player, CommandOutput output)
 		{
 			output.CustomReturnColor = true;
-			int level = player.GetBypassMode() ? 5 : player.Scp079Data.Level + 1;
+			int level = player.GetBypassMode() ? 5 : player.GetLevel() + 1;
 			string humansAlive;
 			string decontTime;
 			string ScientistsEscaped;
@@ -66,7 +63,7 @@ namespace InfoCommand
 			string CiAlive;
 			string estMTFtime;
 
-			humansAlive = (PluginManager.Manager.Server.Round.Stats.ClassDAlive + PluginManager.Manager.Server.Round.Stats.ScientistsAlive + PluginManager.Manager.Server.Round.Stats.CiAlive + PluginManager.Manager.Server.Round.Stats.NTFAlive).ToString();
+			humansAlive = (RoundSummary.singleton.CountTeam(Team.CDP) + RoundSummary.singleton.CountTeam(Team.RSC) + RoundSummary.singleton.CountTeam(Team.CHI) + RoundSummary.singleton.CountTeam(Team.MTF).ToString());
 
 			if (level < plugin.decont)
 			{
@@ -78,13 +75,13 @@ namespace InfoCommand
 				{
 					decontTime = plugin.decontdisabled;
 				}
-				else if (PluginManager.Manager.Server.Map.LCZDecontaminated)
+				else if (Map.IsLCZDecontaminated)
 				{
 					decontTime = plugin.deconthappened;
 				}
 				else
 				{
-					float auxTime = (DeconTime - PluginManager.Manager.Server.Round.Duration / 60.0f);
+					float auxTime = (DeconTime - RoundSummary.roundTime / 60.0f);
 					decontTime = auxTime > 0 ? Stylize(auxTime.ToString("0.00")) : plugin.decontbug;
 				}
 			}
@@ -95,8 +92,8 @@ namespace InfoCommand
 			}
 			else
 			{
-				ClassDEscaped = Stylize(PluginManager.Manager.Server.Round.Stats.ClassDEscaped.ToString("00"));
-				ScientistsEscaped = Stylize(PluginManager.Manager.Server.Round.Stats.ScientistsEscaped.ToString("00"));
+				ClassDEscaped = Stylize(RoundSummary.escaped_ds.ToString("00"));
+				ScientistsEscaped = Stylize(RoundSummary.escaped_scientists.ToString("00"));
 			}
 
 			if (level < plugin.plebs)
@@ -106,8 +103,8 @@ namespace InfoCommand
 			}
 			else
 			{
-				ClassDAlive = Stylize(PluginManager.Manager.Server.Round.Stats.ClassDAlive.ToString("00"));
-				ScientistsAlive = Stylize(PluginManager.Manager.Server.Round.Stats.ScientistsAlive.ToString("00"));
+				ClassDAlive = Stylize(RoundSummary.singleton.CountTeam(Team.CDP).ToString("00"));
+				ScientistsAlive = Stylize(RoundSummary.singleton.CountTeam(Team.RSC).ToString("00"));
 			}
 			if (level < plugin.mtfci)
 			{
@@ -116,8 +113,8 @@ namespace InfoCommand
 			}
 			else
 			{
-				MTFAlive = Stylize(PluginManager.Manager.Server.Round.Stats.NTFAlive.ToString("00"));
-				CiAlive = Stylize(PluginManager.Manager.Server.Round.Stats.CiAlive.ToString("00"));
+				MTFAlive = Stylize(RoundSummary.singleton.CountTeam(Team.MTF).ToString("00"));
+				CiAlive = Stylize(RoundSummary.singleton.CountTeam(Team.CHI).ToString("00"));
 			}
 			if (level > plugin.mtfest)
 			{
@@ -136,15 +133,15 @@ namespace InfoCommand
 				}
 				else
 				{
-					if (PluginManager.Manager.Server.Round.Duration - LastMtfSpawn < MinMTF)
+					if (RoundSummary.roundTime - LastMtfSpawn < MinMTF)
 					{
-						if (plugin.longTime) estMTFtime = plugin.mtfest0.Replace("$(min)", SecondsToTime(MinMTF - PluginManager.Manager.Server.Round.Duration + LastMtfSpawn)).Replace("$(max)", SecondsToTime(MaxMTF - PluginManager.Manager.Server.Round.Duration + LastMtfSpawn));
-						else estMTFtime = plugin.mtfest0.Replace("$(min)", Stylize(MinMTF - PluginManager.Manager.Server.Round.Duration + LastMtfSpawn.ToString("0"))).Replace("$(max)", (MaxMTF - PluginManager.Manager.Server.Round.Duration + LastMtfSpawn).ToString("0"));
+						if (plugin.longTime) estMTFtime = plugin.mtfest0.Replace("$(min)", SecondsToTime(MinMTF - RoundSummary.roundTime + LastMtfSpawn)).Replace("$(max)", SecondsToTime(MaxMTF - RoundSummary.roundTime + LastMtfSpawn));
+						else estMTFtime = plugin.mtfest0.Replace("$(min)", Stylize(MinMTF - RoundSummary.roundTime + LastMtfSpawn.ToString("0"))).Replace("$(max)", (MaxMTF - RoundSummary.roundTime + LastMtfSpawn).ToString("0"));
 					}
-					else if (PluginManager.Manager.Server.Round.Duration - LastMtfSpawn < MaxMTF)
+					else if (RoundSummary.roundTime - LastMtfSpawn < MaxMTF)
 					{
-						if (plugin.longTime) estMTFtime = plugin.mtfest1.Replace("$(max)", SecondsToTime(MaxMTF - PluginManager.Manager.Server.Round.Duration + LastMtfSpawn));
-						else estMTFtime = plugin.mtfest1.Replace("$(max)", Stylize(MaxMTF - PluginManager.Manager.Server.Round.Duration + LastMtfSpawn.ToString("0")));
+						if (plugin.longTime) estMTFtime = plugin.mtfest1.Replace("$(max)", SecondsToTime(MaxMTF - RoundSummary.roundTime + LastMtfSpawn));
+						else estMTFtime = plugin.mtfest1.Replace("$(max)", Stylize(MaxMTF - RoundSummary.roundTime + LastMtfSpawn.ToString("0")));
 					}
 					else
 					{
@@ -159,26 +156,26 @@ namespace InfoCommand
 			}
 			// This bs below can be optimized by using a dictionary or two arrays with its own function, but for now it's staying like this.
 			string infomsg = plugin.infomsg
-				.Replace("$scpalive", PluginManager.Manager.Server.Round.Stats.SCPAlive.ToString("0"))
+				.Replace("$scpalive", RoundSummary.singleton.CountTeam(Team.SCP).ToString("0"))
 				.Replace("$humans", humansAlive).Replace("$estMTF", estMTFtime)
 				.Replace("$decont", decontTime)
 				.Replace("$cdesc", ClassDEscaped).Replace("$sciesc", ScientistsEscaped)
 				.Replace("$cdalive", ClassDAlive).Replace("$cialive", CiAlive)
-				.Replace("$scialive", ScientistsAlive).Replace("$mtfalive", MTFAlive);
+				.Replace("$scialive", ScientistsAlive).Replace("$mtfalive", MTFAlive); ;
 			player.SendConsoleMessage(infomsg.Replace("\\n", Environment.NewLine), "white");
 			if (level >= plugin.gens)
 			{
 				string ReturnMessage = plugin.generators;
-				foreach (Generator generator in PluginManager.Manager.Server.Map.GetGenerators())
+				foreach (var generator in Generator079.generators)
 				{
-					ReturnMessage += plugin.generatorin.Replace("$room", generator.Room.RoomType.ToString()) + ' ';
-					if (generator.Engaged)
+					ReturnMessage += plugin.generatorin.Replace("$room", generator.curRoom) + ' ';
+					if (generator.enabled)
 					{
 						ReturnMessage += plugin.activated + '\n';
 					}
 					else
 					{
-						ReturnMessage += (generator.HasTablet ? plugin.hastablet : plugin.notablet) + ' ' + plugin.timeleft.Replace("$sec", Stylize((int) generator.TimeLeft)) + '\n';
+						ReturnMessage += (generator.isTabletConnected ? plugin.hastablet : plugin.notablet) + ' ' + plugin.timeleft.Replace("$sec", Stylize((int) generator.remainingPowerup)) + '\n';
 					}
 				}
 				return "<color=\"white\">" + ReturnMessage + "</color>";
@@ -199,31 +196,18 @@ namespace InfoCommand
 		}
 		private string Stylize(object obj)
 		{
-			return $"<b><color={plugin.color}>{obj.ToString()}</color></b>";
+			return $"<b><color={plugin.color}>{obj}</color></b>";
 		}
-		public void OnSetConfig(SetConfigEvent ev)
+		public void OnWaitingForPlayers()
 		{
-			switch (ev.Key)
-			{
-				case "disable_decontamination":
-					DeconBool = (bool)ev.Value;
-					return;
-				case "decontamination_time":
-					DeconTime = (float)ev.Value;
-					return;
-				case "minimum_MTF_time_to_spawn":
-					MinMTF = (int)ev.Value;
-					return;
-				case "maximum_MTF_time_to_spawn":
-					MaxMTF = (int)ev.Value;
-					return;
-				default:
-					return;
-			}
+            DeconBool = GameCore.ConfigFile.ServerConfig.GetBool("disable_decontamination");
+			DeconTime = GameCore.ConfigFile.ServerConfig.GetFloat("decontamination_time");
+			MinMTF = GameCore.ConfigFile.ServerConfig.GetInt("minimum_MTF_time_to_spawn");
+			MaxMTF = GameCore.ConfigFile.ServerConfig.GetInt("maximum_MTF_time_to_spawn");
 		}
-		public void OnTeamRespawn(TeamRespawnEvent ev)
+		public void OnTeamRespawn(ref TeamRespawnEvent ev)
 		{
-			LastMtfSpawn = PluginManager.Manager.Server.Round.Duration;
+			LastMtfSpawn = RoundSummary.roundTime;
 		}
 	}
 }

@@ -1,65 +1,54 @@
 ﻿using Pro079Core;
 using Pro079Core.API;
-using Smod2;
-using Smod2.API;
-using Smod2.Attributes;
-using Smod2.Config;
-using Smod2.Lang;
+using EXILED;
 
 namespace TeslaCommand
 {
-	[PluginDetails(
-		author = "RogerFK",
-		name = "Pro 079 Tesla",
-		description = "Tesla command for Pro-079.",
-		id = "rogerfk.pro079.tesla",
-		version = "2.0",
-		langFile = "p079tesla",
-		configPrefix = "p079_tesla",
-		SmodMajor = 3,
-		SmodMinor = 5,
-		SmodRevision = 0
-		)]
-
 	public class TeslaPlugin : Plugin
 	{
+		public bool enable;
+		public int cost;
+		public int level;
+		public int remaining;
+
 		public override void OnDisable()
 		{
-			Info("Pro079 Tesla disabled.");
+			Log.Info("Pro079 Tesla disabled.");
 		}
 
 		public override void OnEnable()
 		{
-			Info("Pro079 Tesla enabled");
-		}
-		[ConfigOption]
-		public readonly bool enable = true;
-		[ConfigOption]
-		public readonly int cost = 40;
-		[ConfigOption]
-		public readonly int level = 1;
-		[ConfigOption]
-		public readonly int remaining = 5;
-		[LangOption]
-		public readonly string teslacmd = "te";
-		[LangOption]
-		public readonly string teslaExtra = "<time>";
-		[LangOption]
-		public readonly string teslause = "Disables all teslas for the amount of seconds you want";
-		[LangOption]
-		public readonly string globaltesla = "All teslas disabled.";
-		[LangOption]
-		public readonly string teslausage = "Usage: .079 $cmd <time>";
-		[LangOption]
-		public readonly string teslarem = "Teslas re-enabled in $sec seconds";
-		[LangOption]
-		public readonly string teslarenabled = "<color=#66F>Teslas re-enabled</color>";
-		public override void Register()
-		{
-			Info("Loading Pro-079 Tesla configs and registering the command...");
+			ReloadConfigs();
+			if (!enable)
+				return;
 
 			Pro079.Manager.RegisterCommand(new TeslaCommand(this));
+			Log.Info("Pro079 Tesla enabled");
 		}
+
+		public void ReloadConfigs()
+		{
+			enable = Config.GetBool("p079_tesla_enable", true);
+			cost = Config.GetInt("p079_tesla_cost", 40);
+			level = Config.GetInt("p079_tesla_level", 1);
+			remaining = Config.GetInt("p079_tesla_remaining", 5);
+		}
+		
+		//Lang Options
+		public readonly string teslacmd = "te";
+		public readonly string teslaExtra = "<time>";
+		public readonly string teslause = "Disables all teslas for the amount of seconds you want";
+		public readonly string globaltesla = "All teslas disabled.";
+		public readonly string teslausage = "Usage: .079 $cmd <time>";
+		public readonly string teslarem = "Teslas re-enabled in $sec seconds";
+		public readonly string teslarenabled = "<color=#66F>Teslas re-enabled</color>";
+
+		public override void OnReload()
+		{
+			
+		}
+
+		public override string getName => "Pro079.Tesla";
 	}
 	public class TeslaCommand : ICommand079
 	{
@@ -94,7 +83,7 @@ namespace TeslaCommand
 
 		public int CurrentCooldown { get => 0; set => _ = value; }
 
-		public string CallCommand(string[] args, Player player, CommandOutput output)
+		public string CallCommand(string[] args, ReferenceHub player, CommandOutput output)
 		{
 			if (args.Length < 2)
 			{

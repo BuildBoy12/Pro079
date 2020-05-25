@@ -1,7 +1,5 @@
 ﻿using Pro079Core;
 using Pro079Core.API;
-using Smod2;
-using Smod2.API;
 
 namespace Pro079MTF
 {
@@ -38,7 +36,7 @@ namespace Pro079MTF
 
 		public string ExtraArguments => plugin.mtfusage;
 
-		public string CallCommand(string[] args, Player player, CommandOutput output)
+		public string CallCommand(string[] args, ReferenceHub player, CommandOutput output)
 		{
 			if (args.Length >= 3)
 			{
@@ -53,8 +51,8 @@ namespace Pro079MTF
 					return plugin.mtfuse.Replace("$min", plugin.cost.ToString()) +
 						plugin.mtfmaxscp.Replace("$max", plugin.maxscp.ToString());
 				}
-				PluginManager.Manager.Server.Map.AnnounceNtfEntrance(scpLeft, mtfNum, args[1][0]);
-				Pro079.Manager.GiveExp(player, 5f, ExperienceType.CHEAT);
+				PlayerManager.localPlayer.GetComponent<MTFRespawn>().RpcPlayCustomAnnouncement("MtfUnit epsilon 11 designated nato_" + args[0] + " " + mtfNum + " " + "HasEntered AllRemaining AwaitingRecontainment" + " " + scpLeft + " " + "scpsubjects", false, true);
+				Pro079.Manager.GiveExp(player, 5f);
 				return Pro079.Configs.CommandSuccess;
 			}
 			else

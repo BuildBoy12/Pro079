@@ -1,6 +1,4 @@
 ﻿using Pro079Core.API;
-using Smod2;
-using Smod2.API;
 
 namespace ChaosCommand
 {
@@ -38,9 +36,9 @@ namespace ChaosCommand
 
 		public int CurrentCooldown { get; set; }
 
-		public string CallCommand(string[] args, Player player, CommandOutput output)
+		public string CallCommand(string[] args, ReferenceHub player, CommandOutput output)
 		{
-			PluginManager.Manager.Server.Map.AnnounceCustomMessage(plugin.msg);
+			PlayerManager.localPlayer.GetComponent<MTFRespawn>().RpcPlayCustomAnnouncement(plugin.msg, false, true);
 			return Pro079Core.Pro079.Configs.CommandSuccess;
 		}
 	}

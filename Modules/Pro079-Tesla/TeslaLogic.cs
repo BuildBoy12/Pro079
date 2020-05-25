@@ -1,7 +1,6 @@
-﻿using System;
+﻿using EXILED.Extensions;
+using System;
 using System.Collections.Generic;
-using Smod2;
-using Smod2.API;
 
 namespace TeslaCommand
 {
@@ -21,16 +20,16 @@ namespace TeslaCommand
 			}
 			int remTime = plugin.remaining;
 			yield return MEC.Timing.WaitForSeconds(time - remTime);
-			foreach (Smod2.API.Player player in PluginManager.Manager.Server.GetPlayers())
+			foreach (ReferenceHub player in Player.GetHubs())
 			{
 				string remainingStr = plugin.teslarem;
-				if (player.TeamRole.Role == Role.SCP_079)
+				if (player.GetRole() == RoleType.Scp079)
 				{
 					for (i = remTime; i > 0; i--)
 					{
-						player.PersonalBroadcast(1, Environment.NewLine + remainingStr.Replace("$sec", "<b>" + i.ToString() + "</b>"), false);
+						player.Broadcast(1, Environment.NewLine + remainingStr.Replace("$sec", "<b>" + i.ToString() + "</b>"), false);
 					}
-					player.PersonalBroadcast(5, Environment.NewLine + plugin.GetTranslation("teslarenabled"), false);
+					player.Broadcast(5, Environment.NewLine + plugin.teslarenabled, false);
 				}
 			}
 			yield return MEC.Timing.WaitForSeconds(remTime);

@@ -1,55 +1,49 @@
-﻿using Pro079Core;
-using Smod2;
-using Smod2.Attributes;
-using Smod2.Config;
-using Smod2.Lang;
+﻿using EXILED;
+using Pro079Core;
 
 namespace ChaosCommand
 {
-	[PluginDetails(
-		author = "RogerFK",
-		name = "Pro 079 Chaos",
-		description = "Chaos command for Pro-079.",
-		id = "rogerfk.pro079.chaos",
-		version = "2.0",
-		configPrefix = "p079_chaos",
-		langFile = "p079chaos",
-		SmodMajor = 3,
-		SmodMinor = 5,
-		SmodRevision = 0
-		)]
-
 	public class ChaosPlugin : Plugin
 	{
+		public bool enable;
+		public int cooldown;
+		public int cost;
+		public int level;
+		public string msg;
+
 		public override void OnDisable()
 		{
-			Info("Pro079 Chaos disabled.");
+			Log.Info("Pro079 Chaos disabled.");
 		}
 		public override void OnEnable()
 		{
-			Info("Pro079 Chaos enabled");
+			ReloadConfigs();
+			if (!enable)
+				return;
+
+			Pro079.Manager.RegisterCommand(new ChaosCommand(this));
+			Log.Info("Pro079 Chaos enabled");		
 		}
-		[ConfigOption]
-		public readonly bool enable = true;
-		[ConfigOption]
-		public readonly int cooldown = 50;
-		[ConfigOption]
-		public readonly int cost = 50;
-		[ConfigOption]
-		public readonly int level = 2;
-		[ConfigOption]
-		public readonly string msg = "warning . chaosinsurgency detected in the surface";
-		[LangOption]
+
+		public void ReloadConfigs()
+		{
+			enable = Config.GetBool("p079_chaos_enable", true);
+			cooldown = Config.GetInt("p079_chaos_cooldown", 50);
+			cost = Config.GetInt("p079_chaos_cost", 50);
+			level = Config.GetInt("p079_chaos_level", 2);
+			msg = Config.GetString("p079_chaos_msg", "warning . chaosinsurgency detected in the surface");
+		}
+
+		//LangOptions
 		public readonly string chaoscmd = "chaos";
-		[LangOption]
 		public readonly string chaoshelp = "Fakes the chaos coming";
-		[LangOption]
 		public readonly string ready = "<b><color=\"green\">Chaos command ready</color></b>";
 
-		public override void Register()
+		public override void OnReload()
 		{
-			Info("Loading Pro-079 Chaos configs and registering the command...");
-			Pro079.Manager.RegisterCommand(new ChaosCommand(this));
+
 		}
+
+		public override string getName => "Pro079.Chaos";
 	}
 }

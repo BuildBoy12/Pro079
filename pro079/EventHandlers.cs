@@ -2,25 +2,19 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using EXILED;
+using EXILED.Extensions;
 using Pro079Core.API;
-using Smod2;
-using Smod2.API;
-using Smod2.EventHandlers;
-using Smod2.Events;
 
 namespace Pro079Core
 {
-	internal class EventHandlers : IEventHandlerCallCommand, IEventHandlerSetRole,
-		IEventHandlerPlayerDie, IEventHandlerWaitingForPlayers
+	public class EventHandlers
 	{
-		private readonly Pro079 plugin;
-		public EventHandlers(Pro079 plugin)
-		{
-			this.plugin = plugin;
-		}
+		public Pro079 plugin;
+		public EventHandlers(Pro079 plugin) => this.plugin = plugin;
 		internal static Door[] DoorArray { get; private set; }
 
-		public void OnCallCommand(PlayerCallCommandEvent ev)
+		public void OnCallCommand(ConsoleCommandEvent ev)
 		{
 			if (ev.Command.StartsWith("079"))
 			{
@@ -28,7 +22,7 @@ namespace Pro079Core
 				{
 					return;
 				}
-				if (ev.Player.TeamRole.Role != Role.SCP_079)
+				if (ev.Player.GetRole() != RoleType.Scp079)
 				{
 					ev.ReturnMessage = plugin.notscp079;
 					return;
@@ -66,7 +60,7 @@ namespace Pro079Core
 							return;
 						}
 						ev.Player.SendConsoleMessage(plugin.tipsMsg.Replace("\\n", "\n"), "white");
-						ev.ReturnMessage = "<Made by RogerFK#3679>";
+						ev.ReturnMessage = "<Made by RogerFK#3679, Ported by BuildBoy12#6125>";
 						return;
 					}
 					else if (args[0] == plugin.suicidecmd)
@@ -76,9 +70,9 @@ namespace Pro079Core
 							ev.ReturnMessage = plugin.disabled;
 							return;
 						}
-						List<Player> PCplayers = PluginManager.Manager.Server.GetPlayers(Role.SCP_079);
-						int pcs = PCplayers.Count;
-						if (PluginManager.Manager.Server.Round.Stats.SCPAlive + PluginManager.Manager.Server.Round.Stats.Zombies - pcs != 0)
+						IEnumerable<ReferenceHub> PCplayers = Player.GetHubs(RoleType.Scp079);
+						int pcs = PCplayers.Count();
+						if (Team.SCP.GetHubs().Count() - pcs != 0)
 						{
 							ev.ReturnMessage = plugin.cantsuicide;
 							return;
@@ -106,12 +100,12 @@ namespace Pro079Core
 						}
 						if (!ev.Player.GetBypassMode())
 						{
-							if (ev.Player.Scp079Data.Level + 1 < plugin.ultLevel)
+							if (ev.Player.GetLevel() + 1 < plugin.ultLevel)
 							{
 								ev.ReturnMessage = Pro079.Configs.LowLevel(plugin.ultLevel);
 								return;
 							}
-							if (ev.Player.Scp079Data.AP < ultimate.Cost)
+							if (ev.Player.GetEnergy() < ultimate.Cost)
 							{
 								ev.ReturnMessage = Pro079.Configs.LowAP(ultimate.Cost);
 								return;
@@ -132,17 +126,17 @@ namespace Pro079Core
 					}
 					if (!ev.Player.GetBypassMode())
 					{
-						if (ev.Player.Scp079Data.Level + 1 < CommandHandler.MinLevel)
+						if (ev.Player.GetLevel() + 1 < CommandHandler.MinLevel)
 						{
 							ev.ReturnMessage = Pro079.Configs.LowLevel(CommandHandler.MinLevel);
 							return;
 						}
-						else if (ev.Player.Scp079Data.AP < CommandHandler.APCost)
+						else if (ev.Player.GetEnergy() < CommandHandler.APCost)
 						{
 							ev.ReturnMessage = Pro079.Configs.LowAP(CommandHandler.APCost);
 							return;
 						}
-						int cooldown = CommandHandler.CurrentCooldown - PluginManager.Manager.Server.Round.Duration;
+						int cooldown = CommandHandler.CurrentCooldown - RoundSummary.roundTime;
 						if (cooldown > 0)
 						{
 							ev.ReturnMessage = Pro079.Configs.CmdOnCooldown(cooldown);
@@ -168,7 +162,7 @@ namespace Pro079Core
 						{
 							if(output.DrainAp) Pro079.Manager.DrainAP(ev.Player, CommandHandler.APCost);
 
-							if (CommandHandler.CurrentCooldown < PluginManager.Manager.Server.Round.Duration) Pro079.Manager.SetOnCooldown(CommandHandler);
+							if (CommandHandler.CurrentCooldown < RoundSummary.roundTime) Pro079.Manager.SetOnCooldown(CommandHandler);
 
 							if (CommandHandler.Cassie && output.CassieCooldown)
 							{
@@ -188,49 +182,70 @@ namespace Pro079Core
 					}
 					catch (Exception e)
 					{
-						plugin.Error($"Error with command \"{args[0]}\" and literally not my problem:\n" + e.ToString());
+						Log.Error($"Error with command \"{args[0]}\" and literally not my problem:\n" + e.ToString());
 						ev.ReturnMessage = plugin.error + ": " + e.Message;
 					}
 				}
 			}
 		}
 
-		public void OnSetRole(PlayerSetRoleEvent ev)
+		public void OnSetRole(SetClassEvent ev)
 		{
-			if (!plugin.spawnBroadcast || !plugin.enable)
+			try
 			{
-				return;
-			}
-
-			if (ev.Role == Role.SCP_079)
-			{
-				MEC.Timing.RunCoroutine(Pro079Logic.DelaySpawnMsg(ev.Player), 1);
-			}
-		}
-
-		public void OnPlayerDie(PlayerDeathEvent ev)
-		{
-			if (ev.Player.TeamRole.Team == Smod2.API.Team.SCP && ev.Player.TeamRole.Role != Role.SCP_079)
-			{
-				List<Player> PCplayers = PluginManager.Manager.Server.GetPlayers(Role.SCP_079);
-				int pcs = PCplayers.Count;
-				if (pcs < 0) return;
-				if (PluginManager.Manager.Server.Round.Stats.SCPAlive + PluginManager.Manager.Server.Round.Stats.Zombies - pcs <= 1)
+				if (!plugin.spawnBroadcast || !plugin.enable)
 				{
-					MEC.Timing.RunCoroutine(Pro079Logic.DelayKysMessage(PCplayers), 1);
+					return;
+				}
+
+				if (ev.Role == RoleType.Scp079)
+				{
+					MEC.Timing.RunCoroutine(Pro079Logic.DelaySpawnMsg(ev.Player));
 				}
 			}
+			catch(Exception e)
+			{
+				Log.Error($"Pro079 SetClassEvent error: {e}");
+			}		
 		}
 
-		public void OnWaitingForPlayers(WaitingForPlayersEvent ev)
+		public void OnPlayerDie(ref PlayerDeathEvent ev)
 		{
-			DoorArray = UnityEngine.Object.FindObjectsOfType<Door>();
-			foreach (KeyValuePair<string, ICommand079> Command in Pro079.Manager.Commands)
+			try
 			{
-				Command.Value.CurrentCooldown = 0;
+				if (ev.Player.GetTeam() == Team.SCP && ev.Player.GetRole() != RoleType.Scp079)
+				{
+					IEnumerable<ReferenceHub> PCplayers = Player.GetHubs(RoleType.Scp079);
+					int pcs = PCplayers.Count();
+					if (pcs < 0) return;
+					if (Team.SCP.GetHubs().Count() - pcs <= 1)
+					{
+						MEC.Timing.RunCoroutine(Pro079Logic.DelayKysMessage(PCplayers), 1);
+					}
+				}
 			}
-			Pro079.Manager.UltimateCooldown = 0;
-            Pro079.Manager.CassieCooldown = 0;
+			catch(Exception e)
+			{
+				Log.Error($"Pro079 PlayerDeathEvent error: {e}");
+			}		
+		}
+
+		public void OnWaitingForPlayers()
+		{
+			try
+			{
+				DoorArray = UnityEngine.Object.FindObjectsOfType<Door>();
+				/*foreach (KeyValuePair<string, ICommand079> Command in Pro079.Manager.Commands)
+				{
+					Command.Value.CurrentCooldown = 0;
+				}
+				Pro079.Manager.UltimateCooldown = 0;
+				Pro079.Manager.CassieCooldown = 0;*/
+			}
+			catch (Exception e)
+			{
+				Log.Error($"Pro079 WaitingForPlayers error: {e}");
+			}
 		}
 	}
 }

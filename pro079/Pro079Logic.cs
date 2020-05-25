@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using EXILED;
+using EXILED.Extensions;
+using EXILED.Patches;
+using MEC;
 using Pro079Core.API;
-using Smod2;
-using Smod2.API;
 
 namespace Pro079Core
 {
@@ -38,15 +41,15 @@ namespace Pro079Core
 		}
 		internal static string GetHelp()
 		{
-			string help = Pro079.Instance.basicHelp;
+			string help = Pro079.basicHelp;
 			if (Help == null || Help.Count != Pro079.Manager.Commands.Keys.Count) FetchExternalHelp();
 			foreach (string line in Help)
 			{
 				help += Environment.NewLine + line;
 			}
-			if (Pro079.Instance.suicide) help += System.Environment.NewLine + $"<b>.079 {Pro079.Instance.suicidecmd}</b> - " + Pro079.Instance.suicidehelp;
-			if (Pro079.Instance.ult) help += System.Environment.NewLine + $"<b>.079 {Pro079.Instance.ultcmd}</b> - " + Pro079.Instance.ulthelp;
-			if (Pro079.Instance.tips) help += System.Environment.NewLine + $"<b>.079 {Pro079.Instance.tipscmd}</b> - " + Pro079.Instance.tipshelp;
+			if (Pro079.Instance.suicide) help += Environment.NewLine + $"<b>.079 {Pro079.Instance.suicidecmd}</b> - " + Pro079.Instance.suicidehelp;
+			if (Pro079.Instance.ult) help += Environment.NewLine + $"<b>.079 {Pro079.Instance.ultcmd}</b> - " + Pro079.Instance.ulthelp;
+			if (Pro079.Instance.tips) help += Environment.NewLine + $"<b>.079 {Pro079.Instance.tipscmd}</b> - " + Pro079.Instance.tipshelp;
 			return help;
 		}
 		private static List<string> UltimateHelp;
@@ -84,28 +87,28 @@ namespace Pro079Core
 		///////////////////////////////////////
 		//	 		LOGIC FUNCTIONS			 //
 		///////////////////////////////////////
-		internal static IEnumerator<float> DelaySpawnMsg(Player player)
+		internal static IEnumerator<float> DelaySpawnMsg(ReferenceHub player)
 		{
-			yield return 0.1f; // This value produces completely random outputs, but it's good enough for delaying the message a tiny bit so it doesn't overlap
-			if (player.TeamRole.Role == Role.SCP_079)
+			yield return Timing.WaitForSeconds(0.1f);
+			if (player.GetRole() == RoleType.Scp079)
 			{
-				player.PersonalClearBroadcasts();
-				player.PersonalBroadcast(20, Pro079.Instance.broadcastMsg, true);
+				player.ClearBroadcasts();
+				player.Broadcast(20, Pro079.broadcastMsg, false);
 				player.SendConsoleMessage(GetHelp(), "white");
 			}
 		}
 		/// <summary>
 		/// Fakes a suicide/suicides the given player (6th generator)
 		/// </summary>
-		public static IEnumerator<float> SixthGen(Player player = null)
+		public static IEnumerator<float> SixthGen(ReferenceHub player = null)
 		{
-			PluginManager.Manager.Server.Map.AnnounceCustomMessage("SCP079RECON6");
-			PluginManager.Manager.Server.Map.AnnounceCustomMessage("SCP 0 7 9 CONTAINEDSUCCESSFULLY");
+			PlayerManager.localPlayer.GetComponent<MTFRespawn>().RpcPlayCustomAnnouncement("SCP079RECON6", false, false);
+			PlayerManager.localPlayer.GetComponent<MTFRespawn>().RpcPlayCustomAnnouncement("SCP 0 7 9 CONTAINEDSUCCESSFULLY", false, false);
 			for (int j = 0; j < 350; j++)
 			{
-				yield return 0f;
+				yield return Timing.WaitForSeconds(0f);
 			}
-			Generator079.generators[0].CallRpcOvercharge();
+			Generator079.mainGenerator.CallRpcOvercharge();
 			foreach (Door door in EventHandlers.DoorArray)
 			{
 				Scp079Interactable component = door.GetComponent<Scp079Interactable>();
@@ -114,11 +117,11 @@ namespace Pro079Core
 					door.ChangeState(true);
 				}
 			}
-			if (player != null) player.ChangeRole(Role.SPECTATOR);
+			if (player != null) player.SetRole(RoleType.Spectator);
 			Recontainer079.isLocked = true;
 			for (int k = 0; k < 500; k++)
 			{
-				yield return 0f;
+				yield return Timing.WaitForSeconds(0f);
 			}
 			Recontainer079.isLocked = false;
 		}
@@ -130,25 +133,25 @@ namespace Pro079Core
 			// People complained about it being "easy to be told apart". Not anymore.
 			MTFRespawn mtf = PlayerManager.localPlayer.GetComponent<MTFRespawn>();
 			 NineTailedFoxAnnouncer annc = NineTailedFoxAnnouncer.singleton;
-			while (annc.queue.Count > 0 || AlphaWarheadController.host.inProgress)
+			while (annc.queue.Count > 0 || AlphaWarheadController.Host.inProgress)
 			{
-				yield return 0f;
+				yield return Timing.WaitForSeconds(0f);
 			}
-			mtf.CallRpcPlayCustomAnnouncement("SCP079RECON5", false);
+			mtf.CallRpcPlayCustomAnnouncement("SCP079RECON5", false, true);
 			// This massive for loop jank is what the main game does. Go complain to them.
 			for (int i = 0; i < 2750; i++)
 			{
-				yield return 0f;
+				yield return Timing.WaitForSeconds(0f);
 			}
-			while (annc.queue.Count > 0 || AlphaWarheadController.host.inProgress)
+			while (annc.queue.Count > 0 || AlphaWarheadController.Host.inProgress)
 			{
-				yield return 0f;
+				yield return Timing.WaitForSeconds(0f);
 			}
-			mtf.CallRpcPlayCustomAnnouncement("SCP079RECON6", true);
-			mtf.CallRpcPlayCustomAnnouncement("SCP 0 7 9 CONTAINEDSUCCESSFULLY", false);
+			mtf.CallRpcPlayCustomAnnouncement("SCP079RECON6", false, false);
+			mtf.CallRpcPlayCustomAnnouncement("SCP 0 7 9 CONTAINEDSUCCESSFULLY", false, false);
 			for (int j = 0; j < 350; j++)
 			{
-				yield return 0f;
+				yield return Timing.WaitForSeconds(0f);
 			}
 			Generator079.generators[0].CallRpcOvercharge();
 			foreach (Door door in UnityEngine.Object.FindObjectsOfType<Door>())
@@ -162,7 +165,7 @@ namespace Pro079Core
 			Recontainer079.isLocked = true;
 			for (int k = 0; k < 500; k++)
 			{
-				yield return 0f;
+				yield return Timing.WaitForSeconds(0f);
 			}
 			Recontainer079.isLocked = false;
 		}
@@ -173,22 +176,22 @@ namespace Pro079Core
 			{
 				yield return MEC.Timing.WaitForSeconds(time);
 
-				List<Player> PCplayers = PluginManager.Manager.Server.GetPlayers(Role.SCP_079);
-				foreach (Player player in PCplayers)
+				IEnumerable<ReferenceHub> PCplayers = Player.GetHubs(RoleType.Scp079);
+				foreach (ReferenceHub player in PCplayers)
 				{
-					player.PersonalBroadcast(3, Pro079.Instance.cassieready, false);
+					player.Broadcast(3, Pro079.Instance.cassieready, false);
 				}
 			}
 		}
-		internal static IEnumerator<float> DelayKysMessage(List<Player> PCplayers)
+		internal static IEnumerator<float> DelayKysMessage(IEnumerable<ReferenceHub> PCplayers)
 		{
 			if (string.IsNullOrEmpty(Pro079.Instance.kys)) yield break;
-			yield return 0.3f;
-			if (PluginManager.Manager.Server.Round.Stats.SCPAlive + PluginManager.Manager.Server.Round.Stats.Zombies - PCplayers.Count == 0)
+			yield return Timing.WaitForSeconds(0.3f);
+			if (Team.SCP.GetHubs().Count() - PCplayers.Count() == 0)
 			{
-				foreach (Player player in PCplayers)
+				foreach (ReferenceHub player in PCplayers)
 				{
-					player.PersonalBroadcast(20, Pro079.Instance.kys, false);
+					player.Broadcast(20, Pro079.Instance.kys, false);
 				}
 			}
 		}
