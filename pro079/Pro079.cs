@@ -5,14 +5,30 @@ namespace Pro079Core
 	public class Pro079 : Plugin
 	{
 		public EventHandlers EventHandlers;
-        /// <summary>
-        /// <para>Manager that contains all commands and useful functions</para>
-        /// </summary>
-        public static Pro079Manager Manager { private set; get; }
-        /// <summary>
-        /// User defined configurations and language options
-        /// </summary>
-        public static Configs Configs { private set; get; }
+		private static Pro079Manager _manager;
+		/// <summary>
+		/// <para>Manager that contains all commands and useful functions</para>
+		/// </summary>
+		public static Pro079Manager Manager
+		{
+			get
+			{
+				if (_manager == null) _manager = new Pro079Manager(Instance);
+				return _manager;
+			}
+		}
+		private static Configs _configs;
+		/// <summary>
+		/// User defined configurations and language options
+		/// </summary>
+		public static Configs Configs
+		{
+			get
+			{
+				if (_configs == null) _configs = new Configs(Instance);
+				return _configs;
+			}
+		}
 		// Config options //
 
 		// Public options
@@ -102,13 +118,14 @@ namespace Pro079Core
 			Events.ConsoleCommandEvent += EventHandlers.OnCallCommand;
 			Events.SetClassEvent += EventHandlers.OnSetRole;
 			Events.PlayerDeathEvent += EventHandlers.OnPlayerDie;
-			// Info string to ASSERT DOMINANCE.
-			Log.Info("Pro079 Core enabled.\n      ╔═══╗╔═══╗╔═══╗╔═══╗╔═══╗╔═══╗\n      ║╔═╗║║╔═╗║║╔═╗║║╔═╗║║╔═╗║║╔═╗║\n      ║╚═╝║║╚═╝║║║─║║║║║║║╚╝╔╝║║╚═╝║\n      ║╔══╝║╔╗╔╝║║─║║║║║║║──║╔╝╚══╗║\n      ║║───║║║╚╗║╚═╝║║╚═╝║──║║─╔══╝║\n      ╚╝───╚╝╚═╝╚═══╝╚═══╝──╚╝─╚═══╝");
+			// Info string to ASSERT DOMINANCE. (let's just delete it since it only works in windows XD)
+			Log.Info("Pro079 Core enabled.");//\n      ╔═══╗╔═══╗╔═══╗╔═══╗╔═══╗╔═══╗\n      ║╔═╗║║╔═╗║║╔═╗║║╔═╗║║╔═╗║║╔═╗║\n      ║╚═╝║║╚═╝║║║─║║║║║║║╚╝╔╝║║╚═╝║\n      ║╔══╝║╔╗╔╝║║─║║║║║║║──║╔╝╚══╗║\n      ║║───║║║╚╗║╚═╝║║╚═╝║──║║─╔══╝║\n      ╚╝───╚╝╚═╝╚═══╝╚═══╝──╚╝─╚═══╝");
+			Instance = this;
 		}
 
 		public override void OnReload()
 		{
-			
+
 		}
 
 		public override string getName => "Pro079";

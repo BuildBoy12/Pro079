@@ -7,7 +7,8 @@ namespace SCPCommand
 		public bool enable;
 		public int cooldown;
 		public int cost;
-		public int level ;
+		public int level;
+		// this should get changed at some point
 		public string[] list = new string[] { "173", "096", "106", "049", "939" };
 
 		public override void OnDisable()

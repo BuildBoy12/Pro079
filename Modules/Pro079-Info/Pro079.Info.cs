@@ -31,10 +31,12 @@ namespace InfoCommand
 			if (!enable)
 				return;
 
+			InfoCommand = new InfoCommand(this);
 			Events.TeamRespawnEvent += InfoCommand.OnTeamRespawn;
 			Events.WaitingForPlayersEvent += InfoCommand.OnWaitingForPlayers;
-			InfoCommand reference = new InfoCommand(this);
-			Pro079.Manager.RegisterCommand(reference);
+			Log.Info("evWaitin");
+			Pro079.Manager.RegisterCommand(InfoCommand);
+			Log.Info("register");
 			Log.Info("Pro079 Info enabled.");
 		}
 
@@ -79,7 +81,7 @@ namespace InfoCommand
 
 		public override void OnReload()
 		{
-			
+
 		}
 
 		public override string getName => "Pro079.Info";

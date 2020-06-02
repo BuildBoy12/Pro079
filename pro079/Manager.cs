@@ -10,7 +10,7 @@ namespace Pro079Core
 	{
 		public static Pro079Manager Manager;
 		private readonly Pro079 plugin;
-		public Pro079Manager(Pro079 plugin)
+		internal Pro079Manager(Pro079 plugin)
 		{
 			this.plugin = plugin;
 			Manager = this;

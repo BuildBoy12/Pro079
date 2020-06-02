@@ -85,18 +85,13 @@ namespace TeslaCommand
 
 		public string CallCommand(string[] args, ReferenceHub player, CommandOutput output)
 		{
-			if (args.Length < 2)
-			{
-				return plugin.teslausage;
-			}
 			float time;
-			if (!float.TryParse(args[1], out time))
+			if (args.Length < 1 || !float.TryParse(args[1], out time))
 			{
-				return plugin.teslausage;
+				output.Success = false;
+				return plugin.teslausage.Replace("$cmd", plugin.teslacmd);
 			}
-			int p = (int)System.Environment.OSVersion.Platform;
-			if ((p == 4) || (p == 6) || (p == 128)) MEC.Timing.RunCoroutine(TeslaLogic.DisableTeslas(time, plugin), MEC.Segment.Update);
-			else MEC.Timing.RunCoroutine(TeslaLogic.DisableTeslas(time, plugin), 1);
+			MEC.Timing.RunCoroutine(TeslaLogic.DisableTeslas(time, plugin), MEC.Segment.Update);
 			Pro079.Manager.GiveExp(player, time);
 			return plugin.globaltesla;
 		}
