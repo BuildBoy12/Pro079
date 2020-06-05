@@ -6,6 +6,7 @@ namespace TeslaCommand
 {
 	public class TeslaPlugin : Plugin
 	{
+		public TeslaCommand TeslaCommand;
 		public bool enable;
 		public int cost;
 		public int level;
@@ -13,6 +14,7 @@ namespace TeslaCommand
 
 		public override void OnDisable()
 		{
+			Events.RoundEndEvent -= TeslaCommand.RoundEnd;
 			Log.Info("Pro079 Tesla disabled.");
 		}
 
@@ -22,6 +24,7 @@ namespace TeslaCommand
 			if (!enable)
 				return;
 
+			Events.RoundEndEvent += TeslaCommand.RoundEnd;
 			Pro079.Manager.RegisterCommand(new TeslaCommand(this));
 			Log.Info("Pro079 Tesla enabled");
 		}
@@ -83,15 +86,20 @@ namespace TeslaCommand
 
 		public int CurrentCooldown { get => 0; set => _ = value; }
 
+		public void RoundEnd()
+        {
+			MEC.Timing.KillCoroutines("DisableTeslas");
+        }
+
 		public string CallCommand(string[] args, ReferenceHub player, CommandOutput output)
 		{
 			float time;
-			if (args.Length < 1 || !float.TryParse(args[1], out time))
+			if (args.Length < 1 || !float.TryParse(args[0], out time))
 			{
 				output.Success = false;
 				return plugin.teslausage.Replace("$cmd", plugin.teslacmd);
 			}
-			MEC.Timing.RunCoroutine(TeslaLogic.DisableTeslas(time, plugin), MEC.Segment.Update);
+			MEC.Timing.RunCoroutine(TeslaLogic.DisableTeslas(time, plugin), MEC.Segment.Update, "DisableTeslas");
 			Pro079.Manager.GiveExp(player, time);
 			return plugin.globaltesla;
 		}

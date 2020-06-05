@@ -36,8 +36,8 @@ namespace SCPCommand
 
 		//Language Options
 		public readonly string scpextrainfo = "<###> <reason>";
-		public readonly string scpusage = "Fakes an SCP(173, 096...) death, the reason can be: unknown, tesla, mtf, decon";
-		public readonly string scpuse = "Usage: .079 scp (173/096/106/049/939) (unknown/tesla/mtf/decont) - $min AP";
+		public readonly string scpusage = "Fakes an SCP(173, 096...) death, the reason can be: classd, scientists, chaos, tesla, decont";
+		public readonly string scpuse = "Usage: .079 scp (173/096/106/049/939) (classd/scientist/tesla/chaos/decont) - $min AP";
 		public readonly string scpexist = "Type a SCP that exists";
 		public readonly string scpway = "Type a method that exists";
 		public readonly string scpnomtfleft = "No MTF's alive. Sending as \"unknown\"";

@@ -79,7 +79,7 @@ namespace Pro079Core
 		public readonly string notscp079 = "You aren't SCP-079!";
 		public static string broadcastMsg = "<color=#85ff4c>Press ` to open up the console and use additional commands.</color>";
 		//tips
-		public readonly string tipsMsg = @"TAB (above Caps Lock): opens up the map.\nSpacebar: switches the camera view from the normal mode to the FPS one (with the white dot).\nWASD: move to the camera the plugin says\nTo get out of the Heavy Containment Zone, go to the elevetor (with TAB) and click the floor's white rectangle, or to the checkpoint and press WASD to get out\nAdditionally, this plugins provide extra commands by typing .079 in the console";
+		public readonly string tipsMsg = @"TAB (above Caps Lock): opens up the map.\nSpacebar: switches the camera view from the normal mode to the FPS one (with the white dot).\nWASD: move to the camera the plugin says\nTo get out of the Heavy Containment Zone, go to the elevetor (with TAB) and click the floor's white rectangle, or to the checkpoint and press WASD to get out\nAdditionally, this plugin provides extra commands by typing '.079' in the console";
 		//
 		public readonly string unknowncmd = "Unknown command. Type \".079\" for help.";
 		public readonly string cassieready = "<color=#85ff4c>Announcer (CASSIE) commands ready</color>";
@@ -118,8 +118,7 @@ namespace Pro079Core
 			Events.ConsoleCommandEvent += EventHandlers.OnCallCommand;
 			Events.SetClassEvent += EventHandlers.OnSetRole;
 			Events.PlayerDeathEvent += EventHandlers.OnPlayerDie;
-			// Info string to ASSERT DOMINANCE. (let's just delete it since it only works in windows XD)
-			Log.Info("Pro079 Core enabled.");//\n      ╔═══╗╔═══╗╔═══╗╔═══╗╔═══╗╔═══╗\n      ║╔═╗║║╔═╗║║╔═╗║║╔═╗║║╔═╗║║╔═╗║\n      ║╚═╝║║╚═╝║║║─║║║║║║║╚╝╔╝║║╚═╝║\n      ║╔══╝║╔╗╔╝║║─║║║║║║║──║╔╝╚══╗║\n      ║║───║║║╚╗║╚═╝║║╚═╝║──║║─╔══╝║\n      ╚╝───╚╝╚═╝╚═══╝╚═══╝──╚╝─╚═══╝");
+			Log.Info("Pro079 Core enabled.");
 			Instance = this;
 		}
 

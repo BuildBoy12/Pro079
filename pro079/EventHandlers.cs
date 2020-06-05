@@ -48,7 +48,8 @@ namespace Pro079Core
 
 				if (args.Length == 0)
 				{
-					ev.ReturnMessage = "<color=\"white\">" + Pro079Logic.GetHelp() + "</color>";
+					ev.Color = "white";
+					ev.ReturnMessage = Pro079Logic.GetHelp();
 				}
 				else if (args.Length >= 1)
 				{
@@ -84,7 +85,8 @@ namespace Pro079Core
 					{
 						if (args.Length == 1)
 						{
-							ev.ReturnMessage = "<color=\"white\">"+ Pro079Logic.GetUltimates() + "</color>" ;
+							ev.Color = "white";
+							ev.ReturnMessage = Pro079Logic.GetUltimates();
 							return;
 						}
 						if (Pro079.Manager.UltimateCooldown > 0)
@@ -146,6 +148,7 @@ namespace Pro079Core
 						{
 							if (Pro079.Manager.CassieCooldown > 0)
 							{
+								ev.Color = "white";
 								ev.ReturnMessage = plugin.cassieOnCooldown.Replace("$cd", Pro079.Manager.CassieCooldown.ToString()).Replace("$(cd)", Pro079.Manager.CassieCooldown.ToString());
 								return;
 							}
@@ -235,12 +238,12 @@ namespace Pro079Core
 			try
 			{
 				DoorArray = UnityEngine.Object.FindObjectsOfType<Door>();
-				/*foreach (KeyValuePair<string, ICommand079> Command in Pro079.Manager.Commands)
+				foreach (KeyValuePair<string, ICommand079> Command in Pro079.Manager.Commands)
 				{
 					Command.Value.CurrentCooldown = 0;
 				}
 				Pro079.Manager.UltimateCooldown = 0;
-				Pro079.Manager.CassieCooldown = 0;*/
+				Pro079.Manager.CassieCooldown = 0;
 			}
 			catch (Exception e)
 			{

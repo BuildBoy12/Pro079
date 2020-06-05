@@ -152,37 +152,37 @@ namespace InfoCommand
 			else
 			{
 				estMTFtime = '[' + Pro079.Configs.LevelString(plugin.mtfest, true) + ']';
-
 			}
 			// This bs below can be optimized by using a dictionary or two arrays with its own function, but for now it's staying like this.
 			string infomsg = plugin.infomsg
 				.Replace("$scpalive", RoundSummary.singleton.CountTeam(Team.SCP).ToString("0"))
-				.Replace("$humans", humansAlive).Replace("$estMTF", estMTFtime)
+				.Replace("$humans", humansAlive)
+				.Replace("$estMTF", estMTFtime)
 				.Replace("$decont", decontTime)
 				.Replace("$cdesc", ClassDEscaped).Replace("$sciesc", ScientistsEscaped)
 				.Replace("$cdalive", ClassDAlive).Replace("$cialive", CiAlive)
-				.Replace("$scialive", ScientistsAlive).Replace("$mtfalive", MTFAlive); ;
+				.Replace("$scialive", ScientistsAlive).Replace("$mtfalive", MTFAlive);
 			player.SendConsoleMessage(infomsg.Replace("\\n", Environment.NewLine), "white");
 			if (level >= plugin.gens)
 			{
 				string ReturnMessage = plugin.generators;
 				foreach (var generator in Generator079.generators)
 				{
-					ReturnMessage += plugin.generatorin.Replace("$room", generator.curRoom) + ' ';
-					if (generator.enabled)
+					ReturnMessage += '\n' + plugin.generatorin.Replace("$room", generator.curRoom) + ' ';
+					if (generator.NetworkremainingPowerup == 0)
 					{
 						ReturnMessage += plugin.activated + '\n';
 					}
 					else
 					{
-						ReturnMessage += (generator.isTabletConnected ? plugin.hastablet : plugin.notablet) + ' ' + plugin.timeleft.Replace("$sec", Stylize((int) generator.remainingPowerup)) + '\n';
+						ReturnMessage += (generator.isTabletConnected ? plugin.hastablet : plugin.notablet) + ' ' + plugin.timeleft.Replace("$sec", Stylize((int) generator.remainingPowerup));
 					}
 				}
-				return "<color=\"white\">" + ReturnMessage + "</color>";
+				return "<color=white>" + ReturnMessage + "</color>";
 			}
 			else
 			{
-				return "<color=\"red\">[" + plugin.lockeduntil.Replace("$lvl", Stylize(plugin.gens)) + "]</color>";
+				return "<color=red>[" + plugin.lockeduntil.Replace("$lvl", Stylize(plugin.gens)) + "]</color>";
 			}
 		}
 

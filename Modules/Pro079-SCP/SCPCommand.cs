@@ -46,12 +46,12 @@ namespace SCPCommand
 				return plugin.scpuse.Replace("$min", plugin.cost.ToString());
 			}
 
-			if (!plugin.list.Contains(args[1]))
+			if (!plugin.list.Contains(args[0]))
 			{
 				output.Success = false;
 				return plugin.scpexist + " - " + plugin.scpuse.Replace("$min", plugin.cost.ToString());
 			}
-			string scpNum = string.Join(" ", args[1].ToCharArray());
+			string scpNum = string.Join(" ", args[0].ToCharArray());
 			switch (args[1])
 			{
 				case "mtf":
