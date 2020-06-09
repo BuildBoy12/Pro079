@@ -192,7 +192,7 @@ namespace InfoCommand
 			int mins = ((int)sec - seconds) / 60;
 			return (mins > 0 ? Stylize(mins.ToString()) + $" {plugin.iminutes.Replace("$", (mins != 1 ? plugin.pluralSuffix : string.Empty))}" : string.Empty)
 				+ ((seconds > 0 && mins > 0) ? $" {plugin.iand} ": string.Empty) +
-				(seconds != 0 ? $"<b><color=#F00>{Stylize(seconds)} {plugin.iseconds.Replace("$", (seconds != 1 ? plugin.pluralSuffix : string.Empty))}" : string.Empty);
+				(seconds != 0 ? $"{Stylize(seconds)} <color={plugin.color}>{plugin.iseconds.Replace("$", (seconds != 1 ? plugin.pluralSuffix : string.Empty))}</color>" : string.Empty);
 		}
 		private string Stylize(object obj)
 		{
