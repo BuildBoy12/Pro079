@@ -1,4 +1,5 @@
 ﻿using EXILED;
+using System.Collections.Generic;
 
 namespace SCPCommand
 {
@@ -9,7 +10,7 @@ namespace SCPCommand
 		public int cost;
 		public int level;
 		// this should get changed at some point
-		public string[] list = new string[] { "173", "096", "106", "049", "939" };
+		public List<string> list = new List<string> { "173", "096", "106", "049", "939" };
 
 		public override void OnDisable()
 		{
@@ -31,7 +32,7 @@ namespace SCPCommand
 			cooldown = Config.GetInt("p079_scp_cooldown", 30);
 			cost = Config.GetInt("p079_scp_cost", 40);
 			level = Config.GetInt("p079_scp_level", 1);
-			//list = Config.GetString("");
+			list = Config.GetStringList("p079_scp_list");
 		}
 
 		//Language Options
