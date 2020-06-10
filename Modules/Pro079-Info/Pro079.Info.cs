@@ -34,9 +34,7 @@ namespace InfoCommand
 			InfoCommand = new InfoCommand(this);
 			Events.TeamRespawnEvent += InfoCommand.OnTeamRespawn;
 			Events.WaitingForPlayersEvent += InfoCommand.OnWaitingForPlayers;
-			Log.Info("evWaitin");
 			Pro079.Manager.RegisterCommand(InfoCommand);
-			Log.Info("register");
 			Log.Info("Pro079 Info enabled.");
 		}
 
@@ -64,7 +62,7 @@ namespace InfoCommand
 		public readonly string mtfest0 = "between $(min)s and $(max)s";
 		public readonly string mtfest1 = "less than $(max)";
 		public readonly string mtfest2 = "are respawning / should have already respawned";
-		public readonly string infomsg = "SCP alive: $scpalive\\nHumans alive: $humans | Next MTF/Chaos: $estMTF\\nTime until decontamination: $decont\\nEscaped Class Ds:  $cdesc | Escaped scientists:    $sciesc\\nAlive Class-Ds:    $cdalive | Alive chaos:           $cialive\\nAlive scientists:  $scialive | Alive MTFs:            $mtfalive";
+		public readonly string infomsg = "SCP alive: $scpalive\\nHumans alive: $humans | Next MTF/Chaos: $estMTF\\nTime until decontamination: $decont\\nEscaped Class Ds:  $cdesc | Escaped Scientists: $sciesc\\nAlive Class-Ds:    $cdalive | Alive Chaos:        $cialive\\nAlive Scientists:  $scialive | Alive MTFs:         $mtfalive";
 		public readonly string lockeduntil = "Locked until level $lvl";
 		public readonly string generators = "Generators:";
 		public readonly string generatorin = "$room's generator";

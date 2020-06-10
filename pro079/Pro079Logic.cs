@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using EXILED;
 using EXILED.Extensions;
-using EXILED.Patches;
 using MEC;
 using Pro079Core.API;
 
 namespace Pro079Core
 {
-	public static class Pro079Logic
+    public static class Pro079Logic
 	{
 		////////////////////////////////
 		//			  HELP			  //
@@ -102,7 +100,7 @@ namespace Pro079Core
 		/// </summary>
 		public static IEnumerator<float> SixthGen(ReferenceHub player = null)
 		{
-			PlayerManager.localPlayer.GetComponent<MTFRespawn>().RpcPlayCustomAnnouncement("SCP079RECON6", false, false);
+			PlayerManager.localPlayer.GetComponent<MTFRespawn>().RpcPlayCustomAnnouncement("SCP079RECON6", false, true);
 			PlayerManager.localPlayer.GetComponent<MTFRespawn>().RpcPlayCustomAnnouncement("SCP 0 7 9 CONTAINEDSUCCESSFULLY", false, false);
 			for (int j = 0; j < 350; j++)
 			{
@@ -147,7 +145,7 @@ namespace Pro079Core
 			{
 				yield return Timing.WaitForSeconds(0f);
 			}
-			mtf.CallRpcPlayCustomAnnouncement("SCP079RECON6", false, false);
+			mtf.CallRpcPlayCustomAnnouncement("SCP079RECON6", false, true);
 			mtf.CallRpcPlayCustomAnnouncement("SCP 0 7 9 CONTAINEDSUCCESSFULLY", false, false);
 			for (int j = 0; j < 350; j++)
 			{

@@ -3,6 +3,9 @@ using Pro079Core;
 using Pro079Core.API;
 using EXILED;
 using EXILED.Extensions;
+using System.Collections.Generic;
+using System.Text;
+using LightContainmentZoneDecontamination;
 
 namespace InfoCommand
 {
@@ -20,6 +23,7 @@ namespace InfoCommand
 		private float DeconTime;
 		private int MinMTF;
 		private int MaxMTF;
+		private Dictionary<string, string> replaceDict;
 
 		public bool Disabled
 		{
@@ -81,8 +85,9 @@ namespace InfoCommand
 				}
 				else
 				{
-					float auxTime = (DeconTime - RoundSummary.roundTime / 60.0f);
-					decontTime = auxTime > 0 ? Stylize(auxTime.ToString("0.00")) : plugin.decontbug;
+					//Bs timespan logic because I got tired of it not cooperating :b
+					TimeSpan auxTime = TimeSpan.FromMinutes(DeconTime) - TimeSpan.FromSeconds(DecontaminationController.GetServerTime);
+                    decontTime = auxTime > TimeSpan.FromSeconds(0) ? Stylize(auxTime.ToString()) : plugin.decontbug;
 				}
 			}
 			if (level < plugin.escaped)
@@ -153,16 +158,21 @@ namespace InfoCommand
 			{
 				estMTFtime = '[' + Pro079.Configs.LevelString(plugin.mtfest, true) + ']';
 			}
-			// This bs below can be optimized by using a dictionary or two arrays with its own function, but for now it's staying like this.
-			string infomsg = plugin.infomsg
-				.Replace("$scpalive", RoundSummary.singleton.CountTeam(Team.SCP).ToString("0"))
-				.Replace("$humans", humansAlive)
-				.Replace("$estMTF", estMTFtime)
-				.Replace("$decont", decontTime)
-				.Replace("$cdesc", ClassDEscaped).Replace("$sciesc", ScientistsEscaped)
-				.Replace("$cdalive", ClassDAlive).Replace("$cialive", CiAlive)
-				.Replace("$scialive", ScientistsAlive).Replace("$mtfalive", MTFAlive);
-			player.SendConsoleMessage(infomsg.Replace("\\n", Environment.NewLine), "white");
+			replaceDict = new Dictionary<string, string>()
+			{
+				{ "$scpalive", RoundSummary.singleton.CountTeam(Team.SCP).ToString() },
+				{ "$humans", humansAlive },
+				{ "$estMTF", estMTFtime },
+				{ "$decont", decontTime },
+				{ "$cdesc", ClassDEscaped },
+				{ "$sciesc", ScientistsEscaped },
+				{ "$cdalive", ClassDAlive },
+				{ "$cialive", CiAlive },
+				{ "$scialive", ScientistsAlive },
+				{ "$mtfalive", MTFAlive },
+				{ "\\n", Environment.NewLine }
+			};
+			player.SendConsoleMessage(ReplaceString(new StringBuilder(plugin.infomsg, plugin.infomsg.Length * 2)), "white");
 			if (level >= plugin.gens)
 			{
 				string ReturnMessage = plugin.generators;
@@ -185,7 +195,14 @@ namespace InfoCommand
 				return "<color=red>[" + plugin.lockeduntil.Replace("$lvl", Stylize(plugin.gens)) + "]</color>";
 			}
 		}
-
+		private string ReplaceString(StringBuilder str)
+        {
+			foreach(string s in replaceDict.Keys)
+            {
+				str = str.Replace(s, replaceDict[s]);
+            }
+			return str.ToString();
+        }
 		private string SecondsToTime(float sec)
 		{
 			int seconds = (int)sec % 60;
@@ -198,10 +215,11 @@ namespace InfoCommand
 		{
 			return $"<b><color={plugin.color}>{obj}</color></b>";
 		}
+
 		public void OnWaitingForPlayers()
 		{
             DeconBool = GameCore.ConfigFile.ServerConfig.GetBool("disable_decontamination");
-			DeconTime = GameCore.ConfigFile.ServerConfig.GetFloat("decontamination_time");
+			DeconTime = GameCore.ConfigFile.ServerConfig.GetFloat("decontamination_time", 11.47f);
 			MinMTF = GameCore.ConfigFile.ServerConfig.GetInt("minimum_MTF_time_to_spawn");
 			MaxMTF = GameCore.ConfigFile.ServerConfig.GetInt("maximum_MTF_time_to_spawn");
 		}

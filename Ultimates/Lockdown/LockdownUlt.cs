@@ -41,10 +41,12 @@ namespace LockdownUltimate
 		}
 		private IEnumerator<float> Ult2Toggle()
 		{
+			PlayerManager.localPlayer.GetComponent<MTFRespawn>().RpcPlayCustomAnnouncement("Security Lockdown pitch_2 scp 0 7 9 . Override .g6  pitch_1 Detected .  . jam_010_5 Automatic Emergency Zone  lockdown Initializing . 3 . jam_010_8 2 . 1 ", false, true);
+			yield return MEC.Timing.WaitForSeconds(10f);
 			CurrentlyRunning = true;
 			yield return MEC.Timing.WaitForSeconds(plugin.time);
 			CurrentlyRunning = false;
-			PlayerManager.localPlayer.GetComponent<MTFRespawn>().RpcPlayCustomAnnouncement("attention all Personnel . doors lockdown finished", false, true);
+			PlayerManager.localPlayer.GetComponent<MTFRespawn>().RpcPlayCustomAnnouncement("Automatic Emergency zone lockdown . Disabled", false, true);
 		}
 
 		public string TriggerUltimate(string[] args, ReferenceHub Player)
