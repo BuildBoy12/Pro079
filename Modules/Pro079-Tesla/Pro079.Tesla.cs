@@ -15,7 +15,7 @@ namespace TeslaCommand
 
 		public override void OnDisable()
 		{			
-			Events.RoundEndEvent -= TeslaCommand.RoundEnd;
+			Events.WaitingForPlayersEvent -= TeslaCommand.OnWaitingForPlayers;
 			TeslaCommand = null;
 			Log.Info("Pro079 Tesla disabled.");
 		}
@@ -27,7 +27,7 @@ namespace TeslaCommand
 				return;
 
 			TeslaCommand = new TeslaCommand(this);
-			Events.RoundEndEvent += TeslaCommand.RoundEnd;
+			Events.WaitingForPlayersEvent += TeslaCommand.OnWaitingForPlayers;
 			Pro079.Manager.RegisterCommand(new TeslaCommand(this));
 			Log.Info("Pro079 Tesla enabled");
 		}
@@ -92,7 +92,7 @@ namespace TeslaCommand
 
 		public List<MEC.CoroutineHandle> CoroutineHandles = new List<MEC.CoroutineHandle>();
 
-		public void RoundEnd()
+		public void OnWaitingForPlayers()
         {
 			MEC.Timing.KillCoroutines(CoroutineHandles);
 			TeslaLogic.time = 0;
