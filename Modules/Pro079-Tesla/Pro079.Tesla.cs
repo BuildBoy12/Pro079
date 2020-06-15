@@ -13,8 +13,9 @@ namespace TeslaCommand
 		public int remaining;
 
 		public override void OnDisable()
-		{
+		{			
 			Events.RoundEndEvent -= TeslaCommand.RoundEnd;
+			TeslaCommand = null;
 			Log.Info("Pro079 Tesla disabled.");
 		}
 
@@ -24,6 +25,7 @@ namespace TeslaCommand
 			if (!enable)
 				return;
 
+			TeslaCommand = new TeslaCommand(this);
 			Events.RoundEndEvent += TeslaCommand.RoundEnd;
 			Pro079.Manager.RegisterCommand(new TeslaCommand(this));
 			Log.Info("Pro079 Tesla enabled");
