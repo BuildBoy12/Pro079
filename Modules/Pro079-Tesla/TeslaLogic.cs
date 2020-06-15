@@ -39,5 +39,16 @@ namespace TeslaCommand
 				teslas[i].sizeOfTrigger = distances[i];
 			}
 		}
+
+		public static float time = 0f;
+		internal static IEnumerator<float> TeslaTimer(float ltime)
+        {
+			time = ltime;
+			for (int i = 0; i < ltime; i++)
+            {
+				time--;
+				yield return MEC.Timing.WaitForSeconds(1f);
+            }
+        }
 	}
 }

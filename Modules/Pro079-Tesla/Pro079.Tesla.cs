@@ -1,6 +1,7 @@
 ﻿using Pro079Core;
 using Pro079Core.API;
 using EXILED;
+using System.Collections.Generic;
 
 namespace TeslaCommand
 {
@@ -47,6 +48,7 @@ namespace TeslaCommand
 		public readonly string teslausage = "Usage: .079 $cmd <time>";
 		public readonly string teslarem = "Teslas re-enabled in $sec seconds";
 		public readonly string teslarenabled = "<color=#66F>Teslas re-enabled</color>";
+		public readonly string oncooldown = "Wait $time seconds to use this command.";
 
 		public override void OnReload()
 		{
@@ -88,20 +90,27 @@ namespace TeslaCommand
 
 		public int CurrentCooldown { get => 0; set => _ = value; }
 
+		public List<MEC.CoroutineHandle> CoroutineHandles = new List<MEC.CoroutineHandle>();
+
 		public void RoundEnd()
         {
-			MEC.Timing.KillCoroutines("DisableTeslas");
+			MEC.Timing.KillCoroutines(CoroutineHandles);
+			TeslaLogic.time = 0;
         }
-
 		public string CallCommand(string[] args, ReferenceHub player, CommandOutput output)
 		{
-			float time;
-			if (args.Length < 1 || !float.TryParse(args[0], out time))
+			if(TeslaLogic.time > 0)
+            {
+				output.Success = false;
+				return plugin.oncooldown.Replace("$time", TeslaLogic.time.ToString());
+            }
+			if (args.Length < 1 || !float.TryParse(args[0], out float time))
 			{
 				output.Success = false;
 				return plugin.teslausage.Replace("$cmd", plugin.teslacmd);
 			}
-			MEC.Timing.RunCoroutine(TeslaLogic.DisableTeslas(time, plugin), MEC.Segment.Update, "DisableTeslas");
+			CoroutineHandles.Add(MEC.Timing.RunCoroutine(TeslaLogic.DisableTeslas(time, plugin), MEC.Segment.Update));
+			CoroutineHandles.Add(MEC.Timing.RunCoroutine(TeslaLogic.TeslaTimer(time), MEC.Segment.Update));
 			Pro079.Manager.GiveExp(player, time);
 			return plugin.globaltesla;
 		}
