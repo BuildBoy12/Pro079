@@ -1,49 +1,27 @@
-﻿using EXILED;
+﻿using Exiled.API.Features;
 using Pro079Core;
+using System;
 
 namespace ChaosCommand
 {
-	public class ChaosPlugin : Plugin
+	public class ChaosPlugin : Plugin<Config>
 	{
-		public bool enable;
-		public int cooldown;
-		public int cost;
-		public int level;
-		public string msg;
+		private static readonly Lazy<ChaosPlugin> LazyInstance = new Lazy<ChaosPlugin>(() => new ChaosPlugin());
+		private ChaosPlugin() { }
+		public static ChaosPlugin ConfigRef => LazyInstance.Value;
 
-		public override void OnDisable()
+		public override void OnEnabled()
 		{
-			Log.Info("Pro079 Chaos disabled.");
-		}
-		public override void OnEnable()
-		{
-			ReloadConfigs();
-			if (!enable)
-				return;
-
-			Pro079.Manager.RegisterCommand(new ChaosCommand(this));
-			Log.Info("Pro079 Chaos enabled");		
+			base.OnEnabled();
+			Pro079.Manager.RegisterCommand(new ChaosCommand());
 		}
 
-		public void ReloadConfigs()
+		public override void OnDisabled()
 		{
-			enable = Config.GetBool("p079_chaos_enable", true);
-			cooldown = Config.GetInt("p079_chaos_cooldown", 50);
-			cost = Config.GetInt("p079_chaos_cost", 50);
-			level = Config.GetInt("p079_chaos_level", 2);
-			msg = Config.GetString("p079_chaos_msg", "warning . chaosinsurgency detected in the surface");
+			base.OnDisabled();
 		}
-
-		//LangOptions
-		public readonly string chaoscmd = "chaos";
-		public readonly string chaoshelp = "Fakes the chaos coming";
-		public readonly string ready = "<b><color=\"green\">Chaos command ready</color></b>";
-
-		public override void OnReload()
-		{
-
-		}
-
-		public override string getName => "Pro079.Chaos";
-	}
+		
+		public override string Name => "Pro079.Chaos";
+        public override string Author => "Build";
+    }
 }

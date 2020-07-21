@@ -1,14 +1,14 @@
-﻿namespace Pro079Core.API
+﻿using Exiled.API.Features;
+using System;
+using System.Collections.Generic;
+
+namespace Pro079Core.API
 {
 	public interface ICommand079
 	{
 		//////////////////////////////////////////////////////
 		//					  BASIC DATA					//
 		//////////////////////////////////////////////////////
-		/// <summary>
-		/// If the command is currently disabled, useful for untested modules and alike.
-		/// </summary>
-		bool Disabled { set; get; }
 		/// <summary>
 		/// The name of the command
 		/// </summary>
@@ -32,7 +32,7 @@
 		/// <param name="args">Array of strings with the extra arguments. Sometimes, it's not needed.</param>
 		/// <param name="Player">Player who sent the command. This player contains the <see cref="Scp079Data"/> in case you want to modify anything about it.</param>
 		/// <returns>The string to be returned to the Player's console.</returns>
-		string CallCommand(string[] args, ReferenceHub Player, CommandOutput Output);
+		string CallCommand(string[] args, Player Player, CommandOutput Output);
 		/// <summary>
 		/// If it uses C.A.S.S.I.E. cooldowns, and sets it on cooldown or not. Optional.
 		/// </summary>
@@ -85,6 +85,6 @@
 		/// <param name="args"></param>
 		/// <param name="Player"></param>
 		/// <returns></returns>
-		string TriggerUltimate(string[] args, ReferenceHub Player);
+		string TriggerUltimate(string[] args, Player Player);
 	}
 }

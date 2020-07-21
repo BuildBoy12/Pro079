@@ -1,4 +1,4 @@
-﻿using EXILED.Extensions;
+﻿using Exiled.API.Features;
 using Pro079Core;
 using Pro079Core.API;
 
@@ -6,44 +6,38 @@ namespace GeneratorCommand
 {
 	internal class GenCommand : ICommand079
 	{
-		private readonly GeneratorPlugin plugin;
-		public GenCommand(GeneratorPlugin plugin)
-		{
-			this.plugin = plugin;
-		}
-
 		public bool OverrideDisable = false;
 		public bool Disabled
 		{
-			get => OverrideDisable || !plugin.enable;
+			get => OverrideDisable || !GeneratorPlugin.ConfigRef.Config.IsEnabled;
 			set => OverrideDisable = value;
 		}
 
-		public string Command => plugin.gencmd;
+		public string Command => GeneratorPlugin.ConfigRef.Config.Translations.GenCmd;
 
 		public string ExtraArguments => "[1-6]";
 
-		public string HelpInfo => plugin.genusage;
+		public string HelpInfo => GeneratorPlugin.ConfigRef.Config.Translations.GenUse;
 
 		public bool Cassie => true;
 
-		public int Cooldown => plugin.cooldown;
+		public int Cooldown => GeneratorPlugin.ConfigRef.Config.CommandCooldown;
 
-		public int MinLevel => plugin.level;
+		public int MinLevel => GeneratorPlugin.ConfigRef.Config.CommandLevel;
 
-		public int APCost => plugin.cost;
+		public int APCost => GeneratorPlugin.ConfigRef.Config.CommandCost;
 
-		public string CommandReady => plugin.genready;
+		public string CommandReady => GeneratorPlugin.ConfigRef.Config.Translations.GenReady;
 
 		public int CurrentCooldown { get; set; }
 
-		public string CallCommand(string[] args, ReferenceHub player, CommandOutput output)
+		public string CallCommand(string[] args, Player player, CommandOutput output)
 		{
-			int blackcost = plugin.cost + plugin.costBlackout;
+			int blackcost = APCost + GeneratorPlugin.ConfigRef.Config.CommandCostBlackout;
 			if(args.Length == 0)
 			{
 				output.Success = false;
-				return plugin.genuse;
+				return GeneratorPlugin.ConfigRef.Config.Translations.GenUse;
 			}
 			switch (args[0])
 			{
@@ -51,52 +45,52 @@ namespace GeneratorCommand
 				case "2":
 				case "3":
 				case "4":
-					PlayerManager.localPlayer.GetComponent<MTFRespawn>().RpcPlayCustomAnnouncement("Scp079Recon" + args[0], false, true);
+					Respawning.RespawnEffectsController.PlayCassieAnnouncement("Scp079Recon" + args[0], false, true);
 					Pro079.Manager.GiveExp(player, 20f);
-					return Pro079.Configs.CommandSuccess;
+					return Pro079.Manager.CommandSuccess;
 				case "5":
-					if (!player.GetBypassMode())
+					if (!player.IsBypassModeEnabled)
 					{
-						if (player.GetLevel() < plugin.levelBlackout - 1)
+						if (player.Level < GeneratorPlugin.ConfigRef.Config.CommandLevelBlackout - 1)
 						{
 							output.Success = false;
-							return Pro079.Configs.LowLevel(plugin.levelBlackout);
+							return Pro079.Manager.LowLevel(MinLevel);
 						}
-						if (player.GetEnergy() < blackcost)
+						if (player.Energy < blackcost)
 						{
 							output.Success = false;
-							return Pro079.Configs.LowAP(blackcost);
+							return Pro079.Manager.LowAP(blackcost);
 						}
-						Pro079.Manager.DrainAP(player, plugin.costBlackout);
+						Pro079.Manager.DrainAP(player, blackcost);
 					}
 					MEC.Timing.RunCoroutine(Pro079Logic.Fake5Gens(), MEC.Segment.FixedUpdate);
 					Pro079.Manager.GiveExp(player, 80f);
 					Pro079.Manager.DrainAP(player, blackcost);
-					Pro079.Manager.SetOnCooldown(this, 70 + plugin.penalty + plugin.cooldown);
-					return plugin.gen5msg;
+					Pro079.Manager.SetOnCooldown(this, 70 + GeneratorPlugin.ConfigRef.Config.CommandBlackoutPenalty + Cooldown);
+					return GeneratorPlugin.ConfigRef.Config.Translations.Gen5Msg;
 				case "6":
-					if (!player.GetBypassMode())
+					if (!player.IsBypassModeEnabled)
 					{
-						if (player.GetLevel() < plugin.levelBlackout - 1)
+						if (player.Level < GeneratorPlugin.ConfigRef.Config.CommandLevelBlackout - 1)
 						{
 							output.Success = false;
-							return Pro079.Configs.LowLevel(plugin.levelBlackout);
+							return Pro079.Manager.LowLevel(GeneratorPlugin.ConfigRef.Config.CommandLevelBlackout);
 						}
-						if (player.GetEnergy() < blackcost)
+						if (player.Energy < blackcost)
 						{
 							output.Success = false;
-							return Pro079.Configs.LowAP(blackcost);
+							return Pro079.Manager.LowAP(blackcost);
 						}
-						Pro079.Manager.DrainAP(player, plugin.costBlackout);
+						Pro079.Manager.DrainAP(player, blackcost);
 					}
 					MEC.Timing.RunCoroutine(Pro079Logic.SixthGen(), MEC.Segment.FixedUpdate);
 					Pro079.Manager.GiveExp(player, 50f);
 					Pro079.Manager.DrainAP(player, blackcost);
-					Pro079.Manager.SetOnCooldown(this, plugin.penalty + plugin.cooldown);
-					return plugin.gen5msg;
+					Pro079.Manager.SetOnCooldown(this, GeneratorPlugin.ConfigRef.Config.CommandBlackoutPenalty + Cooldown);
+					return GeneratorPlugin.ConfigRef.Config.Translations.Gen5Msg;
 				default:
 					output.Success = false;
-					return plugin.genuse;
+					return GeneratorPlugin.ConfigRef.Config.Translations.GenUse;
 			}
 		}
 	}

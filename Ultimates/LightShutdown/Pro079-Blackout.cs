@@ -1,48 +1,30 @@
-﻿using EXILED;
+﻿using Exiled.API.Features;
+using System;
 
 namespace BlackoutUltimate
 {
-	public class BlackoutUltimate : Plugin
+	public class BlackoutUltimate : Plugin<Config>
 	{
-		BlackoutLogic BlackoutLogic;
+		private static readonly Lazy<BlackoutUltimate> LazyInstance = new Lazy<BlackoutUltimate>(() => new BlackoutUltimate());
+		private BlackoutUltimate() { }
+		public static BlackoutUltimate ConfigRef => LazyInstance.Value;
 
-		public bool enable;
-		public int cooldown;
-		public int minutes;
-		public int cost;
+		private BlackoutLogic BlackoutLogic;
 
-		public override void OnDisable()
+		public override void OnEnabled()
 		{
-			BlackoutLogic = null;
-			Log.Info("Pro079 Blackout disabled.");
-		}
-		public override void OnEnable()
-		{
-			ReloadConfigs();
-			if (!enable)
-				return;
-
-			BlackoutLogic = new BlackoutLogic(this);
+			base.OnEnabled();
+			BlackoutLogic = new BlackoutLogic();
 			Pro079Core.Pro079.Manager.RegisterUltimate(BlackoutLogic);
-			Log.Info("Pro079 Blackout enabled");
 		}
-		
-		public void ReloadConfigs()
+
+		public override void OnDisabled()
 		{
-			enable = Config.GetBool("p079_blackout_enable", true);
-			cooldown = Config.GetInt("p079_blackout_cooldown", 180);
-			minutes = Config.GetInt("p079_blackout_minutes", 1);
-			cost = Config.GetInt("p079_blackout_cost", 50);
+			base.OnDisabled();
+			BlackoutLogic = null;
 		}
 
-		//LangOptions
-		public readonly string p0blackoutinfo = "Shuts the facility down for {min} minute$";
-
-		public override void OnReload()
-		{
-			
-		}
-
-		public override string getName => "Pro079.Ultimates.Blackout";
-	}
+		public override string Name => "Pro079.Ultimates.Blackout";
+		public override string Author => "Build";
+    }
 }

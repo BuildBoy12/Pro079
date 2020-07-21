@@ -1,45 +1,32 @@
-﻿using Pro079Core.API;
+﻿using Exiled.API.Features;
+using Pro079Core.API;
 
 namespace ChaosCommand
 {
 	internal class ChaosCommand : ICommand079
 	{
-		private readonly ChaosPlugin plugin;
-
-		public ChaosCommand(ChaosPlugin plugin)
-		{
-			this.plugin = plugin;
-		}
-
-		public bool OverrideDisable = false;
-		public bool Disabled
-		{
-			get => OverrideDisable || !plugin.enable;
-			set => OverrideDisable = value;
-		}
-
-		public string Command => plugin.chaoscmd;
+		public bool Cassie => true;
 
 		public string ExtraArguments => string.Empty;
 
-		public string HelpInfo => plugin.chaoshelp;
+		public string HelpInfo => ChaosPlugin.ConfigRef.Config.Translations.ChaosHelp;
 
-		public bool Cassie => true;
+		public string Command => ChaosPlugin.ConfigRef.Config.Translations.ChaosCommand;
 
-		public int Cooldown => plugin.cooldown;
-
-		public int MinLevel => plugin.level;
-
-		public int APCost => plugin.cost;
-
-		public string CommandReady => plugin.ready;
+		public string CommandReady => ChaosPlugin.ConfigRef.Config.Translations.CommandReady;
 
 		public int CurrentCooldown { get; set; }
 
-		public string CallCommand(string[] args, ReferenceHub player, CommandOutput output)
+		public int Cooldown => ChaosPlugin.ConfigRef.Config.CommandCooldown;
+
+		public int MinLevel => ChaosPlugin.ConfigRef.Config.CommandLevel;
+
+		public int APCost => ChaosPlugin.ConfigRef.Config.CommandCost;	
+
+		public string CallCommand(string[] args, Player player, CommandOutput output)
 		{
-			PlayerManager.localPlayer.GetComponent<MTFRespawn>().RpcPlayCustomAnnouncement(plugin.msg, false, true);
-			return Pro079Core.Pro079.Configs.CommandSuccess;
+			Respawning.RespawnEffectsController.PlayCassieAnnouncement(ChaosPlugin.ConfigRef.Config.BroadcastMessage, false, true);
+			return Pro079Core.Pro079.Manager.CommandSuccess;
 		}
 	}
 }

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using EXILED.Extensions;
+using Exiled.API.Features;
 using MEC;
 using Pro079Core.API;
 
@@ -34,20 +34,20 @@ namespace Pro079Core
 			Help = new List<string>(Pro079.Manager.Commands.Keys.Count);
 			foreach (KeyValuePair<string, ICommand079> kvp in Pro079.Manager.Commands)
 			{
-				if (!kvp.Value.Disabled) Help.Add($"<b>.079 {kvp.Key + (!string.IsNullOrEmpty(kvp.Value.ExtraArguments) ? " " + kvp.Value.ExtraArguments : string.Empty)}</b> - {kvp.Value.HelpInfo} {FormatEnergyLevel(kvp.Value.APCost, kvp.Value.MinLevel, Pro079.Instance.energy, Pro079.Instance.level)}");
+				Help.Add($"<b>.079 {kvp.Key + (!string.IsNullOrEmpty(kvp.Value.ExtraArguments) ? " " + kvp.Value.ExtraArguments : string.Empty)}</b> - {kvp.Value.HelpInfo} {FormatEnergyLevel(kvp.Value.APCost, kvp.Value.MinLevel, Pro079.ConfigRef.Config.Translations.Energy, Pro079.ConfigRef.Config.Translations.Level)}");
 			}
 		}
 		internal static string GetHelp()
 		{
-			string help = Pro079.basicHelp;
+			string help = Pro079.ConfigRef.Config.Translations.BasicHelp;
 			if (Help == null || Help.Count != Pro079.Manager.Commands.Keys.Count) FetchExternalHelp();
 			foreach (string line in Help)
 			{
 				help += Environment.NewLine + line;
 			}
-			if (Pro079.Instance.suicide) help += Environment.NewLine + $"<b>.079 {Pro079.Instance.suicidecmd}</b> - " + Pro079.Instance.suicidehelp;
-			if (Pro079.Instance.ult) help += Environment.NewLine + $"<b>.079 {Pro079.Instance.ultcmd}</b> - " + Pro079.Instance.ulthelp;
-			if (Pro079.Instance.tips) help += Environment.NewLine + $"<b>.079 {Pro079.Instance.tipscmd}</b> - " + Pro079.Instance.tipshelp;
+			if (Pro079.Instance.Config.SuicideCommand) help += Environment.NewLine + $"<b>.079 {Pro079.ConfigRef.Config.Translations.SuicideCmd}</b> - " + Pro079.ConfigRef.Config.Translations.SuicideHelp;
+			if (Pro079.Instance.Config.EnableUltimates) help += Environment.NewLine + $"<b>.079 {Pro079.ConfigRef.Config.Translations.UltCmd}</b> - " + Pro079.ConfigRef.Config.Translations.UltHelp;
+			if (Pro079.Instance.Config.EnableTips) help += Environment.NewLine + $"<b>.079 {Pro079.ConfigRef.Config.Translations.TipsCmd}</b> - " + Pro079.ConfigRef.Config.Translations.TipsHelp;
 			return help;
 		}
 		private static List<string> UltimateHelp;
@@ -56,12 +56,17 @@ namespace Pro079Core
 			UltimateHelp = new List<string>(Pro079.Manager.Ultimates.Keys.Count);
 			foreach (KeyValuePair<string, IUltimate079> kvp in Pro079.Manager.Ultimates)
 			{
-				UltimateHelp.Add($"<b>.079 {Pro079.Instance.ultcmd} {kvp.Key}</b> - {kvp.Value.Info} {Pro079.Instance.ultdata.Replace("$cd", kvp.Value.Cooldown.ToString()).Replace("$cost", kvp.Value.Cost.ToString())}");
+				string HelpMsg = $"<b>.079 {Pro079.ConfigRef.Config.Translations.UltCmd} {kvp.Key}</b> - {kvp.Value.Info} {Pro079.ConfigRef.Config.Translations.UltData}";
+				UltimateHelp.Add(Pro079.Manager.ReplaceAfterToken(HelpMsg, '$', new Tuple<string, object>[]
+				{
+					new Tuple<string, object>("cd", kvp.Value.Cooldown),
+					new Tuple<string, object>("cost", kvp.Value.Cost),
+				}));
 			}
 		}
 		internal static string GetUltimates()
 		{
-			string help = Pro079.Instance.ultusageFirstline;
+			string help = Pro079.ConfigRef.Config.Translations.UltUsageFirstLine;
 			if (UltimateHelp == null || UltimateHelp.Count != Pro079.Manager.Ultimates.Keys.Count) FetchUltimates();
 			foreach (string line in UltimateHelp)
 			{
@@ -85,29 +90,30 @@ namespace Pro079Core
 		///////////////////////////////////////
 		//	 		LOGIC FUNCTIONS			 //
 		///////////////////////////////////////
-		internal static IEnumerator<float> DelaySpawnMsg(ReferenceHub player)
+		internal static IEnumerator<float> DelaySpawnMsg(Player player)
 		{
 			yield return Timing.WaitForSeconds(0.1f);
-			if (player.GetRole() == RoleType.Scp079)
+			if (player.Role == RoleType.Scp079)
 			{
 				player.ClearBroadcasts();
-				player.Broadcast(20, Pro079.broadcastMsg, false);
+				player.Broadcast(20, Pro079.ConfigRef.Config.Translations.BroadcastMsg, Broadcast.BroadcastFlags.Normal);
 				player.SendConsoleMessage(GetHelp(), "white");
 			}
 		}
 		/// <summary>
 		/// Fakes a suicide/suicides the given player (6th generator)
 		/// </summary>
-		public static IEnumerator<float> SixthGen(ReferenceHub player = null)
+		public static IEnumerator<float> SixthGen(Player player = null)
 		{
-			PlayerManager.localPlayer.GetComponent<MTFRespawn>().RpcPlayCustomAnnouncement("SCP079RECON6", false, true);
-			PlayerManager.localPlayer.GetComponent<MTFRespawn>().RpcPlayCustomAnnouncement("SCP 0 7 9 CONTAINEDSUCCESSFULLY", false, false);
+			Respawning.RespawnEffectsController.PlayCassieAnnouncement("SCP079RECON6", false, true);
+			Respawning.RespawnEffectsController.PlayCassieAnnouncement("SCP 0 7 9 CONTAINEDSUCCESSFULLY", false, false);
+
 			for (int j = 0; j < 350; j++)
 			{
 				yield return Timing.WaitForSeconds(0f);
 			}
 			Generator079.mainGenerator.CallRpcOvercharge();
-			foreach (Door door in EventHandlers.DoorArray)
+			foreach (Door door in Map.Doors)
 			{
 				Scp079Interactable component = door.GetComponent<Scp079Interactable>();
 				if (component.currentZonesAndRooms[0].currentZone == "HeavyRooms" && door.isOpen && !door.locked && !door.destroyed)
@@ -129,13 +135,12 @@ namespace Pro079Core
 		public static IEnumerator<float> Fake5Gens()
 		{
 			// People complained about it being "easy to be told apart". Not anymore.
-			MTFRespawn mtf = PlayerManager.localPlayer.GetComponent<MTFRespawn>();
-			 NineTailedFoxAnnouncer annc = NineTailedFoxAnnouncer.singleton;
+			NineTailedFoxAnnouncer annc = NineTailedFoxAnnouncer.singleton;
 			while (annc.queue.Count > 0 || AlphaWarheadController.Host.inProgress)
 			{
 				yield return Timing.WaitForSeconds(0f);
 			}
-			mtf.CallRpcPlayCustomAnnouncement("SCP079RECON5", false, true);
+			Respawning.RespawnEffectsController.PlayCassieAnnouncement("SCP079RECON5", false, true);
 			// This massive for loop jank is what the main game does. Go complain to them.
 			for (int i = 0; i < 2750; i++)
 			{
@@ -145,13 +150,13 @@ namespace Pro079Core
 			{
 				yield return Timing.WaitForSeconds(0f);
 			}
-			mtf.CallRpcPlayCustomAnnouncement("SCP079RECON6", false, true);
-			mtf.CallRpcPlayCustomAnnouncement("SCP 0 7 9 CONTAINEDSUCCESSFULLY", false, false);
+			Respawning.RespawnEffectsController.PlayCassieAnnouncement("SCP079RECON6", false, true);
+			Respawning.RespawnEffectsController.PlayCassieAnnouncement("SCP 0 7 9 CONTAINEDSUCCESSFULLY", false, false);
 			for (int j = 0; j < 350; j++)
 			{
 				yield return Timing.WaitForSeconds(0f);
 			}
-			Generator079.generators[0].CallRpcOvercharge();
+			Generator079.mainGenerator.CallRpcOvercharge();
 			foreach (Door door in UnityEngine.Object.FindObjectsOfType<Door>())
 			{
 				Scp079Interactable component = door.GetComponent<Scp079Interactable>();
@@ -174,22 +179,23 @@ namespace Pro079Core
 			{
 				yield return MEC.Timing.WaitForSeconds(time);
 
-				IEnumerable<ReferenceHub> PCplayers = Player.GetHubs(RoleType.Scp079);
-				foreach (ReferenceHub player in PCplayers)
+				IEnumerable<Player> PCplayers = Player.List.Where(x => x.Role == RoleType.Scp079);
+				foreach (Player player in PCplayers)
 				{
-					player.Broadcast(3, Pro079.Instance.cassieready, false);
+					player.Broadcast(3, Pro079.ConfigRef.Config.Translations.CassieReady, Broadcast.BroadcastFlags.Normal);
 				}
+				
 			}
 		}
-		internal static IEnumerator<float> DelayKysMessage(IEnumerable<ReferenceHub> PCplayers)
+		internal static IEnumerator<float> DelayKysMessage(IEnumerable<Player> PCplayers)
 		{
-			if (string.IsNullOrEmpty(Pro079.Instance.kys)) yield break;
+			if (string.IsNullOrEmpty(Pro079.ConfigRef.Config.Translations.kys)) yield break;
 			yield return Timing.WaitForSeconds(0.3f);
-			if (Team.SCP.GetHubs().Count() - PCplayers.Count() == 0)
+			if (Player.List.Where(x => x.Team == Team.SCP).Count() - PCplayers.Count() == 0)
 			{
-				foreach (ReferenceHub player in PCplayers)
+				foreach (Player player in PCplayers)
 				{
-					player.Broadcast(20, Pro079.Instance.kys, false);
+					player.Broadcast(20, Pro079.ConfigRef.Config.Translations.kys, Broadcast.BroadcastFlags.Normal);
 				}
 			}
 		}

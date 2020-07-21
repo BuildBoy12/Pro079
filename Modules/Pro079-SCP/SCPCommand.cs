@@ -1,64 +1,50 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using EXILED.Extensions;
+﻿using Exiled.API.Features;
 using Pro079Core.API;
 
 namespace SCPCommand
 {
 	internal class SCPCommand : ICommand079
 	{
-		private readonly SCPPlugin plugin;
-		public SCPCommand(SCPPlugin plugin)
-		{
-			this.plugin = plugin;
-		}
+		public string Command => SCPPlugin.ConfigRef.Config.Translations.ScpCmd;
 
-		public bool OverrideDisable = false;
-		public bool Disabled
-		{
-			get => OverrideDisable ? OverrideDisable : !plugin.enable;
-			set => OverrideDisable = value;
-		}
+		public string ExtraArguments => SCPPlugin.ConfigRef.Config.Translations.ScpExtraInfo;
 
-		public string Command => plugin.scpcmd;
-
-		public string ExtraArguments => plugin.scpextrainfo;
-
-		public string HelpInfo => plugin.scpusage;
+		public string HelpInfo => SCPPlugin.ConfigRef.Config.Translations.ScpUsage;
 
 		public bool Cassie => true;
 
-		public int Cooldown => plugin.cooldown;
+		public int Cooldown => SCPPlugin.ConfigRef.Config.CommandCooldown;
 
-		public int MinLevel => plugin.level;
+		public int MinLevel => SCPPlugin.ConfigRef.Config.CommandLevel;
 
-		public int APCost => plugin.cost;
+		public int APCost => SCPPlugin.ConfigRef.Config.CommandCost;
 
-		public string CommandReady => plugin.scpready;
+		public string CommandReady => SCPPlugin.ConfigRef.Config.Translations.ScpReady;
 
 		public int CurrentCooldown { get; set; }
 
-		public string CallCommand(string[] args, ReferenceHub player, CommandOutput output)
+		public string CallCommand(string[] args, Player player, CommandOutput output)
 		{
 			if (args.Length < 2)
 			{
 				output.Success = false;
-				return plugin.scpuse.Replace("$min", plugin.cost.ToString());
+				return SCPPlugin.ConfigRef.Config.Translations.ScpUse.Replace("$min", SCPPlugin.ConfigRef.Config.CommandCost.ToString());
 			}
 
-			if (!plugin.list.Contains(args[0]))
+			if (!SCPPlugin.ConfigRef.Config.ScpList.Contains(args[0]))
 			{
 				output.Success = false;
-				return plugin.scpexist + " - " + plugin.scpuse.Replace("$min", plugin.cost.ToString());
+				return SCPPlugin.ConfigRef.Config.Translations.ScpExist + " - " + SCPPlugin.ConfigRef.Config.Translations.ScpUse.Replace("$min", SCPPlugin.ConfigRef.Config.CommandCost.ToString());
 			}
 			string scpNum = string.Join(" ", args[0].ToCharArray());
+			string broadcast = "scp " + scpNum;
 			switch (args[1])
 			{
 				case "mtf":
-					ReferenceHub dummy = null;
-					foreach (ReferenceHub ply in Player.GetHubs())
+					Player dummy = null;
+					foreach (Player ply in Player.List)
 					{
-						if (ply.GetTeam() == Team.MTF)
+						if (ply.Team == Team.MTF)
 						{
 							dummy = ply;
 							break;
@@ -66,31 +52,32 @@ namespace SCPCommand
 					}
 					if (dummy == null)
 					{
-						player.SendConsoleMessage(plugin.scpnomtfleft, "red");
+						player.SendConsoleMessage(SCPPlugin.ConfigRef.Config.Translations.ScpNoMtfLeft, "red");
 					}
 					
 					//PlayerManager.localPlayer.GetComponent<MTFRespawn>().RpcPlayCustomAnnouncement(args[0], dummy);
 					break;
 				case "classd":
-					PlayerManager.localPlayer.GetComponent<MTFRespawn>().RpcPlayCustomAnnouncement("scp " + scpNum + " terminated by ClassD personnel", false, true);
+					broadcast += " terminated by ClassD personnel";
 					break;
 				case "scientist":
-					PlayerManager.localPlayer.GetComponent<MTFRespawn>().RpcPlayCustomAnnouncement("scp " + scpNum + " terminated by science personnel", false, true);
+					broadcast += " terminated by science personnel";
 					break;
 				case "chaos":
-					PlayerManager.localPlayer.GetComponent<MTFRespawn>().RpcPlayCustomAnnouncement("scp " + scpNum + " terminated by ChaosInsurgency", false, true);
+					broadcast += " terminated by ChaosInsurgency";
 					break;
 				case "tesla":
-					PlayerManager.localPlayer.GetComponent<MTFRespawn>().RpcPlayCustomAnnouncement("scp " + scpNum + " Successfully Terminated by automatic security system", false, true);
+					broadcast += " Successfully Terminated by automatic security system";
 					break;
 				case "decont":
-					PlayerManager.localPlayer.GetComponent<MTFRespawn>().RpcPlayCustomAnnouncement("scp " + scpNum + " Lost in Decontamination Sequence", false, true);
+					broadcast += " Lost in Decontamination Sequence";
 					break;
 				default:
-					return plugin.scpway + " .079 scp " + args[0] + " (classd/scientist/chaos/tesla/mtf/decont)";
+					return SCPPlugin.ConfigRef.Config.Translations.ScpWay + " .079 scp " + args[0] + " (classd/scientist/chaos/tesla/mtf/decont)";
 			}
-			Pro079Core.Pro079.Manager.GiveExp(player, 5 * (player.GetLevel() + 1));
-			return Pro079Core.Pro079.Configs.CommandSuccess;
+			Respawning.RespawnEffectsController.PlayCassieAnnouncement(broadcast, false, true);
+			Pro079Core.Pro079.Manager.GiveExp(player, 5 * (player.Level + 1));
+			return Pro079Core.Pro079.Manager.CommandSuccess;
 		}
 	}
 }

@@ -1,41 +1,25 @@
 ﻿using System;
 using Pro079Core;
 using Pro079Core.API;
-using EXILED;
-using EXILED.Extensions;
-using System.Collections.Generic;
-using System.Text;
 using LightContainmentZoneDecontamination;
+using Exiled.API.Features;
+using Exiled.Events.EventArgs;
 
 namespace InfoCommand
 {
-	public class InfoCommand : ICommand079
+    public class InfoCommand : ICommand079
 	{
 		private int LastMtfSpawn;
-		private readonly InfoPlugin plugin;
-		public InfoCommand(InfoPlugin plugin)
-		{
-			this.plugin = plugin;
-		}
-
-		public bool OverrideDisable = false;
 		private bool DeconBool;
 		private float DeconTime;
 		private int MinMTF;
 		private int MaxMTF;
-		private Dictionary<string, string> replaceDict;
 
-		public bool Disabled
-		{
-			get => OverrideDisable ? OverrideDisable : !plugin.enable;
-			set => OverrideDisable = value;
-		}
-
-		public string Command => plugin.infocmd;
+		public string Command => InfoPlugin.ConfigRef.Config.Translations.InfoCmd;
 
 		public string ExtraArguments => string.Empty;
 
-		public string HelpInfo => plugin.infoextrahelp;
+		public string HelpInfo => InfoPlugin.ConfigRef.Config.Translations.InfoExtraHelp;
 
 		public bool Cassie => false;
 
@@ -53,10 +37,10 @@ namespace InfoCommand
 			set => _ = value;
 		}
 
-		public string CallCommand(string[] args, ReferenceHub player, CommandOutput output)
+		public string CallCommand(string[] args, Player player, CommandOutput output)
 		{
 			output.CustomReturnColor = true;
-			int level = player.GetBypassMode() ? 5 : player.GetLevel() + 1;
+			int level = player.IsBypassModeEnabled ? 5 : player.Level + 1;
 			string humansAlive;
 			string decontTime;
 			string ScientistsEscaped;
@@ -69,31 +53,31 @@ namespace InfoCommand
 
 			humansAlive = (RoundSummary.singleton.CountTeam(Team.CDP) + RoundSummary.singleton.CountTeam(Team.RSC) + RoundSummary.singleton.CountTeam(Team.CHI) + RoundSummary.singleton.CountTeam(Team.MTF).ToString());
 
-			if (level < plugin.decont)
+			if (level < InfoPlugin.ConfigRef.Config.DecontLevel)
 			{
-				decontTime = '[' + Pro079.Configs.LevelString(plugin.decont, true) + ']';
+				decontTime = '[' + Pro079.Manager.LevelString(InfoPlugin.ConfigRef.Config.DecontLevel, true) + ']';
 			}
 			else
 			{
 				if (DeconBool)
 				{
-					decontTime = plugin.decontdisabled;
+					decontTime = InfoPlugin.ConfigRef.Config.Translations.DecontDisabled;
 				}
 				else if (Map.IsLCZDecontaminated)
 				{
-					decontTime = plugin.deconthappened;
+					decontTime = InfoPlugin.ConfigRef.Config.Translations.DecontHappened;
 				}
 				else
 				{
 					//Bs timespan logic because I got tired of it not cooperating :b
 					TimeSpan auxTime = TimeSpan.FromMinutes(DeconTime) - TimeSpan.FromSeconds(DecontaminationController.GetServerTime);
-                    decontTime = auxTime > TimeSpan.FromSeconds(0) ? Stylize(auxTime.ToString()) : plugin.decontbug;
+                    decontTime = auxTime > TimeSpan.FromSeconds(0) ? Stylize(auxTime.ToString()) : InfoPlugin.ConfigRef.Config.Translations.DecontBug;
 				}
 			}
-			if (level < plugin.escaped)
+			if (level < InfoPlugin.ConfigRef.Config.EscapedLevel)
 			{
-				ScientistsEscaped = '[' + Pro079.Configs.LevelString(plugin.escaped, true) + ']';
-				ClassDEscaped = '[' + Pro079.Configs.LevelString(plugin.escaped, true) + ']';
+				ScientistsEscaped = '[' + Pro079.Manager.LevelString(InfoPlugin.ConfigRef.Config.EscapedLevel, true) + ']';
+				ClassDEscaped = '[' + Pro079.Manager.LevelString(InfoPlugin.ConfigRef.Config.EscapedLevel, true) + ']';
 			}
 			else
 			{
@@ -101,119 +85,111 @@ namespace InfoCommand
 				ScientistsEscaped = Stylize(RoundSummary.escaped_scientists.ToString("00"));
 			}
 
-			if (level < plugin.plebs)
+			if (level < InfoPlugin.ConfigRef.Config.RscCdpLevel)
 			{
-				ClassDAlive = '[' + Pro079.Configs.LevelString(plugin.plebs, true) + ']';
-				ScientistsAlive = '[' + Pro079.Configs.LevelString(plugin.plebs, true) + ']';
+				ClassDAlive = '[' + Pro079.Manager.LevelString(InfoPlugin.ConfigRef.Config.RscCdpLevel, true) + ']';
+				ScientistsAlive = '[' + Pro079.Manager.LevelString(InfoPlugin.ConfigRef.Config.RscCdpLevel, true) + ']';
 			}
 			else
 			{
 				ClassDAlive = Stylize(RoundSummary.singleton.CountTeam(Team.CDP).ToString("00"));
 				ScientistsAlive = Stylize(RoundSummary.singleton.CountTeam(Team.RSC).ToString("00"));
 			}
-			if (level < plugin.mtfci)
+			if (level < InfoPlugin.ConfigRef.Config.MtfChiLevel)
 			{
-				MTFAlive = '[' + Pro079.Configs.LevelString(plugin.mtfci, true) + ']';
-				CiAlive = '[' + Pro079.Configs.LevelString(plugin.mtfci, true) + ']';
+				MTFAlive = '[' + Pro079.Manager.LevelString(InfoPlugin.ConfigRef.Config.MtfChiLevel, true) + ']';
+				CiAlive = '[' + Pro079.Manager.LevelString(InfoPlugin.ConfigRef.Config.MtfChiLevel, true) + ']';
 			}
 			else
 			{
 				MTFAlive = Stylize(RoundSummary.singleton.CountTeam(Team.MTF).ToString("00"));
 				CiAlive = Stylize(RoundSummary.singleton.CountTeam(Team.CHI).ToString("00"));
 			}
-			if (level > plugin.mtfest)
+			if (level > InfoPlugin.ConfigRef.Config.MtfEstLevel)
 			{
-				if (plugin.mtfop)
+				if (InfoPlugin.ConfigRef.Config.MtfOp)
 				{
-					var cmp = PlayerManager.localPlayer.GetComponent<MTFRespawn>();
-					if (cmp.timeToNextRespawn > 0f)
+					var cmp = PlayerManager.localPlayer.GetComponent<Respawning.RespawnManager>();
+					if (cmp._timeForNextSequence > 0f)
 					{
-						if (plugin.longTime) estMTFtime = plugin.mtfRespawn.Replace("$time", SecondsToTime(cmp.timeToNextRespawn));
-						else estMTFtime = plugin.mtfRespawn.Replace("$time", Stylize(cmp.timeToNextRespawn.ToString("0")));
+						if (InfoPlugin.ConfigRef.Config.LongTime) estMTFtime = InfoPlugin.ConfigRef.Config.Translations.MtfRespawn.Replace("$time", SecondsToTime(cmp._timeForNextSequence));
+						else estMTFtime = InfoPlugin.ConfigRef.Config.Translations.MtfRespawn.Replace("$time", Stylize(cmp._timeForNextSequence.ToString("0")));
 					}
 					else
 					{
-						estMTFtime = plugin.mtfest2;
+						estMTFtime = InfoPlugin.ConfigRef.Config.Translations.MtfEst2;
 					}
 				}
 				else
 				{
-					if (RoundSummary.roundTime - LastMtfSpawn < MinMTF)
+					if (Round.ElapsedTime.Seconds - LastMtfSpawn < MinMTF)
 					{
-						if (plugin.longTime) estMTFtime = plugin.mtfest0.Replace("$(min)", SecondsToTime(MinMTF - RoundSummary.roundTime + LastMtfSpawn)).Replace("$(max)", SecondsToTime(MaxMTF - RoundSummary.roundTime + LastMtfSpawn));
-						else estMTFtime = plugin.mtfest0.Replace("$(min)", Stylize(MinMTF - RoundSummary.roundTime + LastMtfSpawn.ToString("0"))).Replace("$(max)", (MaxMTF - RoundSummary.roundTime + LastMtfSpawn).ToString("0"));
+						if (InfoPlugin.ConfigRef.Config.LongTime) estMTFtime = InfoPlugin.ConfigRef.Config.Translations.MtfEst0.Replace("$(min)", SecondsToTime(MinMTF - Round.ElapsedTime.Seconds + LastMtfSpawn)).Replace("$(max)", SecondsToTime(MaxMTF - Round.ElapsedTime.Seconds + LastMtfSpawn));
+						else estMTFtime = InfoPlugin.ConfigRef.Config.Translations.MtfEst0.Replace("$(min)", Stylize(MinMTF - Round.ElapsedTime.Seconds + LastMtfSpawn.ToString("0"))).Replace("$(max)", (MaxMTF - Round.ElapsedTime.Seconds + LastMtfSpawn).ToString("0"));
 					}
-					else if (RoundSummary.roundTime - LastMtfSpawn < MaxMTF)
+					else if (Round.ElapsedTime.Seconds - LastMtfSpawn < MaxMTF)
 					{
-						if (plugin.longTime) estMTFtime = plugin.mtfest1.Replace("$(max)", SecondsToTime(MaxMTF - RoundSummary.roundTime + LastMtfSpawn));
-						else estMTFtime = plugin.mtfest1.Replace("$(max)", Stylize(MaxMTF - RoundSummary.roundTime + LastMtfSpawn.ToString("0")));
+						if (InfoPlugin.ConfigRef.Config.LongTime) estMTFtime = InfoPlugin.ConfigRef.Config.Translations.MtfEst1.Replace("$(max)", SecondsToTime(MaxMTF - Round.ElapsedTime.Seconds + LastMtfSpawn));
+						else estMTFtime = InfoPlugin.ConfigRef.Config.Translations.MtfEst1.Replace("$(max)", Stylize(MaxMTF - Round.ElapsedTime.Seconds + LastMtfSpawn.ToString("0")));
 					}
 					else
 					{
-						estMTFtime = plugin.mtfest2;
+						estMTFtime = InfoPlugin.ConfigRef.Config.Translations.MtfEst2;
 					} 
 				}
 			}
 			else
 			{
-				estMTFtime = '[' + Pro079.Configs.LevelString(plugin.mtfest, true) + ']';
+				estMTFtime = '[' + Pro079.Manager.LevelString(InfoPlugin.ConfigRef.Config.MtfEstLevel, true) + ']';
 			}
-			replaceDict = new Dictionary<string, string>()
+			string InfoMsg = Pro079.Manager.ReplaceAfterToken(InfoPlugin.ConfigRef.Config.Translations.InfoMsg, '$', new Tuple<string, object>[] 
 			{
-				{ "$scpalive", RoundSummary.singleton.CountTeam(Team.SCP).ToString() },
-				{ "$humans", humansAlive },
-				{ "$estMTF", estMTFtime },
-				{ "$decont", decontTime },
-				{ "$cdesc", ClassDEscaped },
-				{ "$sciesc", ScientistsEscaped },
-				{ "$cdalive", ClassDAlive },
-				{ "$cialive", CiAlive },
-				{ "$scialive", ScientistsAlive },
-				{ "$mtfalive", MTFAlive },
-				{ "\\n", Environment.NewLine }
-			};
-			player.SendConsoleMessage(ReplaceString(new StringBuilder(plugin.infomsg, plugin.infomsg.Length * 2)), "white");
-			if (level >= plugin.gens)
+				new Tuple<string, object>("scpalive", humansAlive),
+				new Tuple<string, object>("humans", estMTFtime),
+				new Tuple<string, object>("estMTF", decontTime),
+				new Tuple<string, object>("decont", ClassDEscaped),
+				new Tuple<string, object>("cdesc", ScientistsEscaped),
+				new Tuple<string, object>("sciesc", ScientistsEscaped),
+				new Tuple<string, object>("cdalive", ClassDAlive),
+				new Tuple<string, object>("cialive", CiAlive),
+				new Tuple<string, object>("scialive", ScientistsAlive),
+				new Tuple<string, object>("mtfalive", MTFAlive),
+				new Tuple<string, object>("\\n", Environment.NewLine),
+			});
+			player.SendConsoleMessage(InfoMsg, "white");
+			if (level >= InfoPlugin.ConfigRef.Config.GenLevel)
 			{
-				string ReturnMessage = plugin.generators;
-				foreach (var generator in Generator079.generators)
+				string ReturnMessage = InfoPlugin.ConfigRef.Config.Translations.Generators;
+				foreach (var generator in Generator079.Generators)
 				{
-					ReturnMessage += '\n' + plugin.generatorin.Replace("$room", generator.curRoom) + ' ';
+					ReturnMessage += '\n' + InfoPlugin.ConfigRef.Config.Translations.HasTablet.Replace("$room", generator.CurRoom) + ' ';
 					if (generator.NetworkremainingPowerup == 0)
 					{
-						ReturnMessage += plugin.activated + '\n';
+						ReturnMessage += InfoPlugin.ConfigRef.Config.Translations.GeneratorActivated + '\n';
 					}
 					else
 					{
-						ReturnMessage += (generator.isTabletConnected ? plugin.hastablet : plugin.notablet) + ' ' + plugin.timeleft.Replace("$sec", Stylize((int) generator.remainingPowerup));
+						ReturnMessage += (generator.isTabletConnected ? InfoPlugin.ConfigRef.Config.Translations.HasTablet : InfoPlugin.ConfigRef.Config.Translations.NoTablet) + ' ' + InfoPlugin.ConfigRef.Config.Translations.TimeLeft.Replace("$sec", Stylize((int) generator.remainingPowerup));
 					}
 				}
 				return "<color=white>" + ReturnMessage + "</color>";
 			}
 			else
 			{
-				return "<color=red>[" + plugin.lockeduntil.Replace("$lvl", Stylize(plugin.gens)) + "]</color>";
+				return "<color=red>[" + InfoPlugin.ConfigRef.Config.Translations.LockedUntil.Replace("$lvl", Stylize(InfoPlugin.ConfigRef.Config.Translations.Generators)) + "]</color>";
 			}
 		}
-		private string ReplaceString(StringBuilder str)
-        {
-			foreach(string s in replaceDict.Keys)
-            {
-				str = str.Replace(s, replaceDict[s]);
-            }
-			return str.ToString();
-        }
 		private string SecondsToTime(float sec)
 		{
 			int seconds = (int)sec % 60;
 			int mins = ((int)sec - seconds) / 60;
-			return (mins > 0 ? Stylize(mins.ToString()) + $" {plugin.iminutes.Replace("$", (mins != 1 ? plugin.pluralSuffix : string.Empty))}" : string.Empty)
-				+ ((seconds > 0 && mins > 0) ? $" {plugin.iand} ": string.Empty) +
-				(seconds != 0 ? $"{Stylize(seconds)} <color={plugin.color}>{plugin.iseconds.Replace("$", (seconds != 1 ? plugin.pluralSuffix : string.Empty))}</color>" : string.Empty);
+			return (mins > 0 ? Stylize(mins.ToString()) + $" {InfoPlugin.ConfigRef.Config.Translations.Minutes.Replace("$", (mins != 1 ? InfoPlugin.ConfigRef.Config.Translations.PluralSuffix : string.Empty))}" : string.Empty)
+				+ ((seconds > 0 && mins > 0) ? $" {InfoPlugin.ConfigRef.Config.Translations.And} ": string.Empty) +
+				(seconds != 0 ? $"{Stylize(seconds)} <color={InfoPlugin.ConfigRef.Config.Color}>{InfoPlugin.ConfigRef.Config.Translations.Seconds.Replace("$", (seconds != 1 ? InfoPlugin.ConfigRef.Config.Translations.PluralSuffix : string.Empty))}</color>" : string.Empty);
 		}
 		private string Stylize(object obj)
 		{
-			return $"<b><color={plugin.color}>{obj}</color></b>";
+			return $"<b><color={InfoPlugin.ConfigRef.Config.Color}>{obj}</color></b>";
 		}
 
 		public void OnWaitingForPlayers()
@@ -223,9 +199,9 @@ namespace InfoCommand
 			MinMTF = GameCore.ConfigFile.ServerConfig.GetInt("minimum_MTF_time_to_spawn");
 			MaxMTF = GameCore.ConfigFile.ServerConfig.GetInt("maximum_MTF_time_to_spawn");
 		}
-		public void OnTeamRespawn(ref TeamRespawnEvent ev)
+		public void OnTeamRespawn(RespawningTeamEventArgs ev)
 		{
-			LastMtfSpawn = RoundSummary.roundTime;
+			LastMtfSpawn = Round.ElapsedTime.Seconds;
 		}
 	}
 }
