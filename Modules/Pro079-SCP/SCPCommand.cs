@@ -5,21 +5,24 @@ namespace SCPCommand
 {
 	internal class SCPCommand : ICommand079
 	{
-		public string Command => SCPPlugin.ConfigRef.Config.Translations.ScpCmd;
+		private readonly SCPPlugin plugin;
+		public SCPCommand(SCPPlugin plugin) => this.plugin = plugin;
 
-		public string ExtraArguments => SCPPlugin.ConfigRef.Config.Translations.ScpExtraInfo;
+		public string Command => plugin.Config.Translations.ScpCmd;
 
-		public string HelpInfo => SCPPlugin.ConfigRef.Config.Translations.ScpUsage;
+		public string ExtraArguments => plugin.Config.Translations.ScpExtraInfo;
+
+		public string HelpInfo => plugin.Config.Translations.ScpUsage;
 
 		public bool Cassie => true;
 
-		public int Cooldown => SCPPlugin.ConfigRef.Config.CommandCooldown;
+		public int Cooldown => plugin.Config.CommandCooldown;
 
-		public int MinLevel => SCPPlugin.ConfigRef.Config.CommandLevel;
+		public int MinLevel => plugin.Config.CommandLevel;
 
-		public int APCost => SCPPlugin.ConfigRef.Config.CommandCost;
+		public int APCost => plugin.Config.CommandCost;
 
-		public string CommandReady => SCPPlugin.ConfigRef.Config.Translations.ScpReady;
+		public string CommandReady => plugin.Config.Translations.ScpReady;
 
 		public int CurrentCooldown { get; set; }
 
@@ -28,13 +31,13 @@ namespace SCPCommand
 			if (args.Length < 2)
 			{
 				output.Success = false;
-				return SCPPlugin.ConfigRef.Config.Translations.ScpUse.Replace("$min", SCPPlugin.ConfigRef.Config.CommandCost.ToString());
+				return plugin.Config.Translations.ScpUse.Replace("$min", plugin.Config.CommandCost.ToString());
 			}
 
-			if (!SCPPlugin.ConfigRef.Config.ScpList.Contains(args[0]))
+			if (!plugin.Config.ScpList.Contains(args[0]))
 			{
 				output.Success = false;
-				return SCPPlugin.ConfigRef.Config.Translations.ScpExist + " - " + SCPPlugin.ConfigRef.Config.Translations.ScpUse.Replace("$min", SCPPlugin.ConfigRef.Config.CommandCost.ToString());
+				return plugin.Config.Translations.ScpExist + " - " + plugin.Config.Translations.ScpUse.Replace("$min", plugin.Config.CommandCost.ToString());
 			}
 			string scpNum = string.Join(" ", args[0].ToCharArray());
 			string broadcast = "scp " + scpNum;
@@ -52,7 +55,7 @@ namespace SCPCommand
 					}
 					if (dummy == null)
 					{
-						player.SendConsoleMessage(SCPPlugin.ConfigRef.Config.Translations.ScpNoMtfLeft, "red");
+						player.SendConsoleMessage(plugin.Config.Translations.ScpNoMtfLeft, "red");
 					}
 					
 					//PlayerManager.localPlayer.GetComponent<MTFRespawn>().RpcPlayCustomAnnouncement(args[0], dummy);
@@ -73,7 +76,7 @@ namespace SCPCommand
 					broadcast += " Lost in Decontamination Sequence";
 					break;
 				default:
-					return SCPPlugin.ConfigRef.Config.Translations.ScpWay + " .079 scp " + args[0] + " (classd/scientist/chaos/tesla/mtf/decont)";
+					return plugin.Config.Translations.ScpWay + " .079 scp " + args[0] + " (classd/scientist/chaos/tesla/mtf/decont)";
 			}
 			Respawning.RespawnEffectsController.PlayCassieAnnouncement(broadcast, false, true);
 			Pro079Core.Pro079.Manager.GiveExp(player, 5 * (player.Level + 1));

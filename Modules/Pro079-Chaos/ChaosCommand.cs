@@ -5,27 +5,30 @@ namespace ChaosCommand
 {
 	internal class ChaosCommand : ICommand079
 	{
+		private readonly ChaosPlugin plugin;
+		public ChaosCommand(ChaosPlugin plugin) => this.plugin = plugin;
+
 		public bool Cassie => true;
 
 		public string ExtraArguments => string.Empty;
 
-		public string HelpInfo => ChaosPlugin.ConfigRef.Config.Translations.ChaosHelp;
+		public string HelpInfo => plugin.Config.Translations.ChaosHelp;
 
-		public string Command => ChaosPlugin.ConfigRef.Config.Translations.ChaosCommand;
+		public string Command => plugin.Config.Translations.ChaosCommand;
 
-		public string CommandReady => ChaosPlugin.ConfigRef.Config.Translations.CommandReady;
+		public string CommandReady => plugin.Config.Translations.CommandReady;
 
 		public int CurrentCooldown { get; set; }
 
-		public int Cooldown => ChaosPlugin.ConfigRef.Config.CommandCooldown;
+		public int Cooldown => plugin.Config.CommandCooldown;
 
-		public int MinLevel => ChaosPlugin.ConfigRef.Config.CommandLevel;
+		public int MinLevel => plugin.Config.CommandLevel;
 
-		public int APCost => ChaosPlugin.ConfigRef.Config.CommandCost;	
+		public int APCost => plugin.Config.CommandCost;	
 
 		public string CallCommand(string[] args, Player player, CommandOutput output)
 		{
-			Respawning.RespawnEffectsController.PlayCassieAnnouncement(ChaosPlugin.ConfigRef.Config.BroadcastMessage, false, true);
+			Respawning.RespawnEffectsController.PlayCassieAnnouncement(plugin.Config.BroadcastMessage, false, true);
 			return Pro079Core.Pro079.Manager.CommandSuccess;
 		}
 	}

@@ -1,22 +1,18 @@
 ﻿using Exiled.API.Features;
 using Pro079Core;
 using Pro079Core.API;
-using System;
 using System.Collections.Generic;
 
 namespace TeslaCommand
 {
-	public class TeslaPlugin : Plugin<Config>
+    public class TeslaPlugin : Plugin<Config>
 	{
 		private TeslaCommand TeslaCommand;
-		private static readonly Lazy<TeslaPlugin> LazyInstance = new Lazy<TeslaPlugin>(() => new TeslaPlugin());
-		private TeslaPlugin() { }
-		public static TeslaPlugin ConfigRef => LazyInstance.Value;
 
 		public override void OnEnabled()
 		{
 			base.OnEnabled();
-			TeslaCommand = new TeslaCommand();
+			TeslaCommand = new TeslaCommand(this);
 			Exiled.Events.Handlers.Server.WaitingForPlayers += TeslaCommand.OnWaitingForPlayers;
 			Pro079.Manager.RegisterCommand(TeslaCommand);
 		}
@@ -34,19 +30,22 @@ namespace TeslaCommand
 
 	public class TeslaCommand : ICommand079
 	{
-		public string Command => TeslaPlugin.ConfigRef.Config.Translations.TeslaCmd;
+		private readonly TeslaPlugin plugin;
+		public TeslaCommand(TeslaPlugin plugin) => this.plugin = plugin;
 
-		public string ExtraArguments => TeslaPlugin.ConfigRef.Config.Translations.TeslaExtra;
+		public string Command => plugin.Config.Translations.TeslaCmd;
 
-		public string HelpInfo => TeslaPlugin.ConfigRef.Config.Translations.TeslaUse;
+		public string ExtraArguments => plugin.Config.Translations.TeslaExtra;
+
+		public string HelpInfo => plugin.Config.Translations.TeslaUse;
 
 		public bool Cassie => false;
 
 		public int Cooldown => 0;
 
-		public int MinLevel => TeslaPlugin.ConfigRef.Config.CommandLevel;
+		public int MinLevel => plugin.Config.CommandLevel;
 
-		public int APCost => TeslaPlugin.ConfigRef.Config.CommandCost;
+		public int APCost => plugin.Config.CommandCost;
 
 		public string CommandReady => string.Empty;
 
@@ -64,17 +63,17 @@ namespace TeslaCommand
 			if(TeslaLogic.time > 0)
             {
 				output.Success = false;
-				return TeslaPlugin.ConfigRef.Config.Translations.OnCooldown.Replace("$time", TeslaLogic.time.ToString());
+				return plugin.Config.Translations.OnCooldown.Replace("$time", TeslaLogic.time.ToString());
             }
 			if (args.Length < 1 || !float.TryParse(args[0], out float time))
 			{
 				output.Success = false;
-				return TeslaPlugin.ConfigRef.Config.Translations.TeslaUsage.Replace("$cmd", TeslaPlugin.ConfigRef.Config.Translations.TeslaCmd);
+				return plugin.Config.Translations.TeslaUsage.Replace("$cmd", plugin.Config.Translations.TeslaCmd);
 			}
-			CoroutineHandles.Add(MEC.Timing.RunCoroutine(TeslaLogic.DisableTeslas(time), MEC.Segment.Update));
+			CoroutineHandles.Add(MEC.Timing.RunCoroutine(TeslaLogic.DisableTeslas(time, plugin), MEC.Segment.Update));
 			CoroutineHandles.Add(MEC.Timing.RunCoroutine(TeslaLogic.TeslaTimer(time), MEC.Segment.Update));
 			Pro079.Manager.GiveExp(player, time);
-			return TeslaPlugin.ConfigRef.Config.Translations.GlobalTesla;
+			return plugin.Config.Translations.GlobalTesla;
 		}
 	}
 }

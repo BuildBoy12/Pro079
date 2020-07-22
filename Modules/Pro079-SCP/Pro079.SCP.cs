@@ -5,14 +5,10 @@ namespace SCPCommand
 {
 	public class SCPPlugin : Plugin<Config>
 	{
-		private static readonly Lazy<SCPPlugin> LazyInstance = new Lazy<SCPPlugin>(() => new SCPPlugin());
-		private SCPPlugin() { }
-		public static SCPPlugin ConfigRef => LazyInstance.Value;
-
 		public override void OnEnabled()
 		{
 			base.OnEnabled();
-			Pro079Core.Pro079.Manager.RegisterCommand(new SCPCommand());
+			Pro079Core.Pro079.Manager.RegisterCommand(new SCPCommand(this));
 		}
 
 		public override void OnDisabled()

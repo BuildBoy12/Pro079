@@ -6,7 +6,7 @@ namespace TeslaCommand
 {
 	internal static class TeslaLogic
 	{
-		internal static IEnumerator<float> DisableTeslas(float time)
+		internal static IEnumerator<float> DisableTeslas(float time, TeslaPlugin plugin)
 		{
 			TeslaGate[] teslas = UnityEngine.Object.FindObjectsOfType<TeslaGate>();
 			int length = teslas.Length;
@@ -18,18 +18,18 @@ namespace TeslaCommand
 				distances[i] = teslas[i].sizeOfTrigger;
 				teslas[i].sizeOfTrigger = -1f;
 			}
-			int remTime = TeslaPlugin.ConfigRef.Config.TeslaRemaining;
+			int remTime = plugin.Config.TeslaRemaining;
 			yield return MEC.Timing.WaitForSeconds(time - remTime);
 			foreach (Player player in Player.List)
 			{
-				string remainingStr = TeslaPlugin.ConfigRef.Config.Translations.TeslaRem;
+				string remainingStr = plugin.Config.Translations.TeslaRem;
 				if (player.Role == RoleType.Scp079)
 				{
 					for (i = remTime; i > 0; i--)
 					{
 						player.Broadcast(1, Environment.NewLine + remainingStr.Replace("$sec", "<b>" + i + "</b>"), Broadcast.BroadcastFlags.Normal);
 					}
-					player.Broadcast(5, Environment.NewLine + TeslaPlugin.ConfigRef.Config.Translations.TeslaReenabled, Broadcast.BroadcastFlags.Normal);
+					player.Broadcast(5, Environment.NewLine + plugin.Config.Translations.TeslaReenabled, Broadcast.BroadcastFlags.Normal);
 				}
 			}
 			yield return MEC.Timing.WaitForSeconds(remTime);

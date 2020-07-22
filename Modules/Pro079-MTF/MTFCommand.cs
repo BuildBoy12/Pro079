@@ -6,23 +6,26 @@ namespace Pro079MTF
 {
 	internal class MTFCommand : ICommand079
 	{
-		public string Command => MTFPlugin.ConfigRef.Config.Translations.MtfCmd;
+		private readonly MTFPlugin plugin;
+		public MTFCommand(MTFPlugin plugin) => this.plugin = plugin;
 
-		public string HelpInfo => MTFPlugin.ConfigRef.Config.Translations.MtfExtendedHelp;
+		public string Command => plugin.Config.Translations.MtfCmd;
+
+		public string HelpInfo => plugin.Config.Translations.MtfExtendedHelp;
 
 		public bool Cassie => true;
 
-		public int Cooldown => MTFPlugin.ConfigRef.Config.CommandCooldown;
+		public int Cooldown => plugin.Config.CommandCooldown;
 
-		public int MinLevel => MTFPlugin.ConfigRef.Config.CommandLevel;
+		public int MinLevel => plugin.Config.CommandLevel;
 
-		public int APCost => MTFPlugin.ConfigRef.Config.CommandCost;
+		public int APCost => plugin.Config.CommandCost;
 
-		public string CommandReady => MTFPlugin.ConfigRef.Config.Translations.MtfReady;
+		public string CommandReady => plugin.Config.Translations.MtfReady;
 
 		public int CurrentCooldown { get; set; }
 
-		public string ExtraArguments => MTFPlugin.ConfigRef.Config.Translations.MtfUsage;
+		public string ExtraArguments => plugin.Config.Translations.MtfUsage;
 
 		public string CallCommand(string[] args, Player player, CommandOutput output)
 		{
@@ -33,11 +36,11 @@ namespace Pro079MTF
 					output.Success = false;
 					return Command.Replace("$min", APCost.ToString());
 				}
-				if (scpLeft > MTFPlugin.ConfigRef.Config.MaxScp)
+				if (scpLeft > plugin.Config.MaxScp)
 				{
 					output.Success = false;
-					return MTFPlugin.ConfigRef.Config.Translations.MtfUse.Replace("$min", APCost.ToString()) +
-						MTFPlugin.ConfigRef.Config.Translations.MtfMaxScp.Replace("$max", MTFPlugin.ConfigRef.Config.Translations.MtfMaxScp.ToString());
+					return plugin.Config.Translations.MtfUse.Replace("$min", APCost.ToString()) +
+						plugin.Config.Translations.MtfMaxScp.Replace("$max", plugin.Config.Translations.MtfMaxScp.ToString());
 				}
 				Respawning.RespawnEffectsController.PlayCassieAnnouncement("MtfUnit epsilon 11 designated nato_" + args[0] + " " + mtfNum + " " + "HasEntered AllRemaining AwaitingRecontainment" + " " + scpLeft + " " + "scpsubjects", false, true);
 				Pro079.Manager.GiveExp(player, 5f);
@@ -46,7 +49,7 @@ namespace Pro079MTF
 			else
 			{
 				output.Success = false;
-				return MTFPlugin.ConfigRef.Config.Translations.MtfUse.Replace("$min", APCost.ToString());
+				return plugin.Config.Translations.MtfUse.Replace("$min", APCost.ToString());
 			}
 		}
 	}
