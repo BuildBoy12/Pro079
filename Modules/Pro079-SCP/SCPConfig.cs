@@ -20,8 +20,8 @@ namespace SCPCommand
     public sealed class Translations
     {
 		public string ScpExtraInfo { get; set; } = "<###> <reason>";
-		public string ScpUsage { get; set; } = "Fakes an SCP(173, 096...) death, the reason can be: classd, scientists, chaos, tesla, decont";
-		public string ScpUse { get; set; } = "Usage: .079 scp (173/096/106/049/939) (classd/scientist/tesla/chaos/decont) - $min AP";
+		public string ScpUsage { get; set; } = "Fakes an SCP(173, 096...) death, the reason can be: classd, scientists, chaos, tesla, mtf, decont";
+		public string ScpUse { get; set; } = "Usage: .079 scp (173/096/106/049/939) (classd/sci/tesla/chaos/mtf/decont) - $min AP";
 		public string ScpExist { get; set; } = "Type a SCP that exists";
 		public string ScpWay { get; set; } = "Type a method that exists";
 		public string ScpNoMtfLeft { get; set; } = "No MTF's alive. Sending as \"unknown\"";

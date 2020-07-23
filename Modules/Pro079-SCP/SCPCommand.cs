@@ -56,13 +56,20 @@ namespace SCPCommand
 					if (dummy == null)
 					{
 						player.SendConsoleMessage(plugin.Config.Translations.ScpNoMtfLeft, "red");
+						broadcast += " Unknown";
 					}
-					
-					//PlayerManager.localPlayer.GetComponent<MTFRespawn>().RpcPlayCustomAnnouncement(args[0], dummy);
+					else
+                    {
+						if (!Respawning.NamingRules.UnitNamingRules.TryGetNamingRule(Respawning.SpawnableTeamType.NineTailedFox, out Respawning.NamingRules.UnitNamingRule unitNamingRule))
+							broadcast += " Unknown";
+						else
+							broadcast += " CONTAINEDSUCCESSFULLY CONTAINMENTUNIT " + unitNamingRule.GetCassieUnitName(dummy.ReferenceHub.characterClassManager.CurUnitName);
+					}				
 					break;
 				case "classd":
 					broadcast += " terminated by ClassD personnel";
 					break;
+				case "sci":
 				case "scientist":
 					broadcast += " terminated by science personnel";
 					break;
@@ -76,7 +83,7 @@ namespace SCPCommand
 					broadcast += " Lost in Decontamination Sequence";
 					break;
 				default:
-					return plugin.Config.Translations.ScpWay + " .079 scp " + args[0] + " (classd/scientist/chaos/tesla/mtf/decont)";
+					return plugin.Config.Translations.ScpWay + " .079 scp " + args[0] + " (classd/sci/chaos/tesla/mtf/decont)";
 			}
 			Respawning.RespawnEffectsController.PlayCassieAnnouncement(broadcast, false, true);
 			Pro079Core.Pro079.Manager.GiveExp(player, 5 * (player.Level + 1));
