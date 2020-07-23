@@ -38,14 +38,14 @@ namespace Pro079Core
 		{
 			if (CommandHandler == null || string.IsNullOrEmpty(CommandHandler.Command))
 			{
-				return "Trying to register a \"null\" or an empty Command is not allowed!";
+				return "Trying to register a \"null\" or an empty name is not allowed!";
 			}
 			if (Commands.ContainsKey(CommandHandler.Command))
 			{
 				return "You can't register the same command twice!";
 			}
 			Commands.Add(CommandHandler.Command, CommandHandler);
-			return "Command succesfully added";
+			return "Command succesfully added.";
 		}
 		/// <summary>
 		/// Dictionary with all the Ultimates and their respective handlers
@@ -68,7 +68,7 @@ namespace Pro079Core
 				return "An ultimate called " + UltimateHandler.Name + " was already added!";
 			}
 			Ultimates.Add(name, UltimateHandler);
-			return "Ultimate succesfully added";
+			return "Ultimate succesfully added.";	
 		}
 
 		/// <summary>
@@ -83,7 +83,7 @@ namespace Pro079Core
 				Command.CurrentCooldown = Round.ElapsedTime.Seconds + CustomValue;
 				if (!string.IsNullOrEmpty(Command.CommandReady))
 				{
-					int p = (int)System.Environment.OSVersion.Platform;
+					int p = (int)Environment.OSVersion.Platform;
 					if ((p == 4) || (p == 6) || (p == 128)) MEC.Timing.RunCoroutine(DelayMessage(Command.CommandReady, CustomValue), MEC.Segment.Update);
 					else MEC.Timing.RunCoroutine(DelayMessage(Command.CommandReady, CustomValue), 1);
 				}
@@ -93,7 +93,7 @@ namespace Pro079Core
 				Command.CurrentCooldown = Round.ElapsedTime.Seconds + Command.Cooldown;
 				if (!string.IsNullOrEmpty(Command.CommandReady))
 				{
-					int p = (int)System.Environment.OSVersion.Platform;
+					int p = (int)Environment.OSVersion.Platform;
 					if ((p == 4) || (p == 6) || (p == 128)) MEC.Timing.RunCoroutine(DelayMessage(Command.CommandReady, Command.Cooldown), MEC.Segment.Update);
 					else MEC.Timing.RunCoroutine(DelayMessage(Command.CommandReady, Command.Cooldown), 1);
 				}
@@ -120,7 +120,7 @@ namespace Pro079Core
 
 			if (!string.IsNullOrEmpty(Pro079.ConfigRef.Config.Translations.UltReady) || Pro079.ConfigRef.Config.Translations.UltReady == "disable" || Pro079.ConfigRef.Config.Translations.UltReady == "disabled" || Pro079.ConfigRef.Config.Translations.UltReady == "none" || Pro079.ConfigRef.Config.Translations.UltReady == "null")
 			{
-				int p = (int)System.Environment.OSVersion.Platform;
+				int p = (int)Environment.OSVersion.Platform;
 				if ((p == 4) || (p == 6) || (p == 128)) MEC.Timing.RunCoroutine(DelayMessage(Pro079.ConfigRef.Config.Translations.UltReady, Ultimate.Cooldown), MEC.Segment.Update);
 				else MEC.Timing.RunCoroutine(DelayMessage(Pro079.ConfigRef.Config.Translations.UltReady, Ultimate.Cooldown), 1);
 
