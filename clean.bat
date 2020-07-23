@@ -1,1 +1,1 @@
-del /F /Q ModuleDLLs\Assembly-CSharp* ModuleDLLs\*.pdb ModuleDLLs\Smod2.dll ModuleDLLs\UnityEngine* ModuleDLLs\0Harmony.dll ModuleDLLs\EXILED* ModuleDLLs\Mirror.dll
+del /F /Q ModuleDLLs\Assembly-CSharp* ModuleDLLs\*.pdb ModuleDLLs\UnityEngine* ModuleDLLs\0Harmony.dll ModuleDLLs\Exiled* ModuleDLLs\Mirror.dll ModuleDLLs\System* ModuleDLLs\YamlDotNet.dll
