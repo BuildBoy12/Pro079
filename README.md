@@ -13,4 +13,4 @@ These will auto-generate in the Exiled config folder as well under their own cat
 This plugin features an API with which you can add new commands/ultimates via plugins (similar to gamemodes/itemmanager)
 Please, check this one for reference, and use it as a template to get things done quick: https://github.com/BuildBoy12/Pro079Template
 
-As well as this is a really poorly detailed template, it's the basics and you could explore everything else for yourself by checking the (Manager.cs)[https://github.com/BuildBoy12/pro079/blob/master/pro079/Manager.cs] and (Config079.cs)[https://github.com/BuildBoy12/pro079/blob/master/pro079/Config079.cs] classes themselves.
+As well as this is a really poorly detailed template, it's the basics and you could explore everything else for yourself by checking the [Manager.cs](https://github.com/BuildBoy12/pro079/blob/master/pro079/Manager.cs) and [Config079.cs](https://github.com/BuildBoy12/pro079/blob/master/pro079/Config079.cs) classes themselves.
