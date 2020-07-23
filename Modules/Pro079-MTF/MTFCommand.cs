@@ -42,7 +42,7 @@ namespace Pro079MTF
 					return plugin.Config.Translations.MtfUse.Replace("$min", APCost.ToString()) +
 						plugin.Config.Translations.MtfMaxScp.Replace("$max", plugin.Config.Translations.MtfMaxScp.ToString());
 				}
-				Respawning.RespawnEffectsController.PlayCassieAnnouncement("MtfUnit epsilon 11 designated nato_" + args[0] + " " + mtfNum + " " + "HasEntered AllRemaining AwaitingRecontainment" + " " + scpLeft + " " + "scpsubjects", false, true);
+				Respawning.RespawnEffectsController.PlayCassieAnnouncement("MtfUnit epsilon 11 designated nato_" + args[0][0] + " " + mtfNum + " " + "HasEntered AllRemaining AwaitingRecontainment" + " " + scpLeft + " " + "scpsubjects", false, true);
 				Pro079.Manager.GiveExp(player, 5f);
 				return Pro079.Manager.CommandSuccess;
 			}
