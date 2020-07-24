@@ -7,13 +7,12 @@ namespace LockdownUltimate
     {
         public bool IsEnabled { get; set; } = true;
 
-        public int LockdownTime { get; set; } = 60;
+        public int Time { get; set; } = 60;
 
-        public int LockdownCooldown { get; set; } = 180;
+        public int Cooldown { get; set; } = 180;
 
-        public int LockdownCost { get; set; } = 50;
+        public int Cost { get; set; } = 50;
 
-        [Description("Translatables")]
         public Translations Translations { get; set; } = new Translations();
     }
 

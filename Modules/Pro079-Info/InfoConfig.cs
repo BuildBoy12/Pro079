@@ -27,7 +27,6 @@ namespace InfoCommand
 
 		public string Color { get; set; } = "red";
 
-		[Description("Translatables")]
 		public Translations Translations { get; set; } = new Translations();
 	}
 

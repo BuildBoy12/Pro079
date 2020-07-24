@@ -11,11 +11,11 @@ namespace BlackoutUltimate
 
 		public string Name => "Blackout";
 
-		public string Info => plugin.Config.Translations.BlackoutInfo.Replace("$", plugin.Config.BlackoutMinutes != 1 ? "s" : string.Empty).Replace("{min}", plugin.Config.BlackoutMinutes.ToString());
+		public string Info => plugin.Config.Translations.BlackoutInfo.Replace("$", plugin.Config.Minutes != 1 ? "s" : string.Empty).Replace("{min}", plugin.Config.Minutes.ToString());
 
-		public int Cooldown => plugin.Config.BlackoutCooldown;
+		public int Cooldown => plugin.Config.Cooldown;
 
-		public int Cost => plugin.Config.BlackoutCost;
+		public int Cost => plugin.Config.Cost;
 
 		public string TriggerUltimate(string[] args, Player Player)
 		{
@@ -29,7 +29,7 @@ namespace BlackoutUltimate
 		{
 			Respawning.RespawnEffectsController.PlayCassieAnnouncement("warning . malfunction detected on heavy containment zone . Scp079Recon6 . . . light systems Disengaged", false, true);
 			yield return MEC.Timing.WaitForSeconds(12.1f);
-			Map.TurnOffAllLights(plugin.Config.BlackoutMinutes * 60f, false);
+			Map.TurnOffAllLights(plugin.Config.Minutes * 60f, false);
 		}
 	}
 }

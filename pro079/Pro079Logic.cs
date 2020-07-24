@@ -189,13 +189,13 @@ namespace Pro079Core
 		}
 		internal static IEnumerator<float> DelayKysMessage(IEnumerable<Player> PCplayers)
 		{
-			if (string.IsNullOrEmpty(Pro079.ConfigRef.Config.Translations.kys)) yield break;
+			if (string.IsNullOrEmpty(Pro079.ConfigRef.Config.Translations.Kys)) yield break;
 			yield return Timing.WaitForSeconds(0.3f);
 			if (Player.List.Where(x => x.Team == Team.SCP).Count() - PCplayers.Count() == 0)
 			{
 				foreach (Player player in PCplayers)
 				{
-					player.Broadcast(20, Pro079.ConfigRef.Config.Translations.kys, Broadcast.BroadcastFlags.Normal);
+					player.Broadcast(20, Pro079.ConfigRef.Config.Translations.Kys, Broadcast.BroadcastFlags.Normal);
 				}
 			}
 		}

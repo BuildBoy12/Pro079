@@ -6,12 +6,11 @@ namespace Pro079MTF
     public sealed class Config : IConfig
     {
         public bool IsEnabled { get; set; } = true;
-		public int CommandCooldown { get; set; } = 60;
-		public int CommandLevel { get; set; } = 2;
-		public int CommandCost { get; set; } = 70;
+		public int Cooldown { get; set; } = 60;
+		public int Level { get; set; } = 2;
+		public int Cost { get; set; } = 70;
 		public int MaxScp { get; set; } = 5;
 
-		[Description("Translatables")]
 		public Translations Translations { get; set; } = new Translations();
 	}
 

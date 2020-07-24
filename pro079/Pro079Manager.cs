@@ -149,7 +149,7 @@ namespace Pro079Core
 		public void DrainAP(Player player, float amount)
 		{
 			if (player.Energy < amount) player.Energy = 0;
-			else player.Energy = player.Energy - amount;
+			else player.Energy -= amount;
 		}
 		/// <summary>
 		/// Gets the ultimate based on the name or based on how it starts.

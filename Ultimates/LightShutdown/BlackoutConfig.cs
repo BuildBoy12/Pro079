@@ -1,16 +1,14 @@
 ﻿using Exiled.API.Interfaces;
-using System.ComponentModel;
 
 namespace BlackoutUltimate
 {
     public sealed class Config : IConfig
     {
         public bool IsEnabled { get; set; } = true;
-        public int BlackoutCooldown { get; set; } = 180;
-        public int BlackoutMinutes { get; set; } = 1;
-        public int BlackoutCost { get; set; } = 50;
+        public int Cooldown { get; set; } = 180;
+        public int Minutes { get; set; } = 1;
+        public int Cost { get; set; } = 50;
 
-        [Description("Translatables")]
         public Translations Translations { get; set; } = new Translations();
     }
 

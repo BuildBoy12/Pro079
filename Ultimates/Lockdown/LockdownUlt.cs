@@ -10,10 +10,10 @@ namespace LockdownUltimate
 		private readonly LockdownPlugin plugin;
 		public LockdownUltimate(LockdownPlugin plugin) => this.plugin = plugin;
 
-		public bool CurrentlyRunning { get; private set; }
-		public string Info => plugin.Config.Translations.LockdownInfo.Replace("{min}", plugin.Config.LockdownTime.ToString());
-		public int Cooldown => plugin.Config.LockdownCooldown;
-		public int Cost => plugin.Config.LockdownCost;
+		private bool CurrentlyRunning = false;
+		public string Info => plugin.Config.Translations.LockdownInfo.Replace("{min}", plugin.Config.Time.ToString());
+		public int Cooldown => plugin.Config.Cooldown;
+		public int Cost => plugin.Config.Cost;
 		public string Name => "Lockdown";
 
 		public void OnWaitingForPlayers()
@@ -40,10 +40,10 @@ namespace LockdownUltimate
 		}
 		private IEnumerator<float> Ult2Toggle()
 		{
-			Respawning.RespawnEffectsController.PlayCassieAnnouncement("Security Lockdown pitch_2 scp 0 7 9 . Override .g6  pitch_1 Detected .  . jam_010_5 Automatic Emergency Zone  lockdown Initializing . 3 . jam_010_8 2 . 1 ", false, true);
+			NineTailedFoxAnnouncer.singleton.ServerOnlyAddGlitchyPhrase("Security Lockdown pitch_2 scp 0 7 9 . Override pitch_1 Detected .  . Automatic Emergency Zone  lockdown Initializing . 3 . 2 . 1 ", 10, 20);
 			yield return MEC.Timing.WaitForSeconds(10f);
 			CurrentlyRunning = true;
-			yield return MEC.Timing.WaitForSeconds(plugin.Config.LockdownTime);
+			yield return MEC.Timing.WaitForSeconds(plugin.Config.Time);
 			CurrentlyRunning = false;
 			Respawning.RespawnEffectsController.PlayCassieAnnouncement("Automatic Emergency zone lockdown . Disabled", false, true);
 		}

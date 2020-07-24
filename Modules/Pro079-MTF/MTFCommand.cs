@@ -15,11 +15,11 @@ namespace Pro079MTF
 
 		public bool Cassie => true;
 
-		public int Cooldown => plugin.Config.CommandCooldown;
+		public int Cooldown => plugin.Config.Cooldown;
 
-		public int MinLevel => plugin.Config.CommandLevel;
+		public int MinLevel => plugin.Config.Level;
 
-		public int APCost => plugin.Config.CommandCost;
+		public int APCost => plugin.Config.Cost;
 
 		public string CommandReady => plugin.Config.Translations.MtfReady;
 

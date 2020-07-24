@@ -1,5 +1,4 @@
 ﻿using Exiled.API.Interfaces;
-using System.ComponentModel;
 
 namespace GeneratorCommand
 {
@@ -7,18 +6,17 @@ namespace GeneratorCommand
     {
         public bool IsEnabled { get; set; } = true;
 
-        [Description("Cooldown (in seconds")]
-        public int CommandCooldown { get; set; } = 60;
+        public int Cooldown { get; set; } = 60;
 
-        public int CommandCost { get; set; } = 40;
+        public int Cost { get; set; } = 40;
 
-        public int CommandCostBlackout { get; set; } = 40;
+        public int CostBlackout { get; set; } = 40;
 
-        public int CommandLevel { get; set; } = 2;
+        public int Level { get; set; } = 2;
 
-        public int CommandLevelBlackout { get; set; } = 3;
+        public int LevelBlackout { get; set; } = 3;
 
-        public int CommandBlackoutPenalty { get; set; } = 60;
+        public int BlackoutPenalty { get; set; } = 60;
 
         public Translations Translations { get; set; } = new Translations();
     }

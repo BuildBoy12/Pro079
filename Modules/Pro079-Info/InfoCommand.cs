@@ -157,9 +157,8 @@ namespace InfoCommand
 				new Tuple<string, object>("cialive", CiAlive),
 				new Tuple<string, object>("scialive", ScientistsAlive),
 				new Tuple<string, object>("mtfalive", MTFAlive),
-				new Tuple<string, object>("\\n", Environment.NewLine),
 			});
-			player.SendConsoleMessage(InfoMsg, "white");
+			player.SendConsoleMessage(InfoMsg.Replace("\\n", Environment.NewLine), "white");
 			if (level >= plugin.Config.GenLevel)
 			{
 				string ReturnMessage = plugin.Config.Translations.Generators;
@@ -202,7 +201,7 @@ namespace InfoCommand
 			MinMTF = GameCore.ConfigFile.ServerConfig.GetInt("minimum_MTF_time_to_spawn");
 			MaxMTF = GameCore.ConfigFile.ServerConfig.GetInt("maximum_MTF_time_to_spawn");
 		}
-		public void OnTeamRespawn(RespawningTeamEventArgs ev)
+		public void OnTeamRespawn(RespawningTeamEventArgs _ev)
 		{
 			LastMtfSpawn = Round.ElapsedTime.Seconds;
 		}

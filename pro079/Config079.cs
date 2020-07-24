@@ -40,8 +40,6 @@ namespace Pro079Core
 		[Description("Enables the broadcast used when a 079 spawns.")]
 		public bool EnableSpawnBroadcast { get; set; } = true;
 
-		//Nabbed method from Roger. Looked too good to not do so. Will probably give the translations their own handler in due time though, it's a bit cluttered for now but it's a simple temporary implementation.
-		[Description("Core plugin translation options.")]
 		public Translations Translations { get; set; } = new Translations();
 	}
 
@@ -70,7 +68,7 @@ namespace Pro079Core
 		public string UltReady { get; set; } = "<color=#85ff4c>Ultimates ready</color>";
 		public string CantSuicide { get; set; } = "You can't suicide when there's other SCP's remaining";
 		public string UltLocked { get; set; } = "To use an ultimate, you need level $lvl";
-		public string kys { get; set; } = "<color=#AA1515>Press ` and write \".079 suicide\" to kill yourself.</color>";
+		public string Kys { get; set; } = "<color=#AA1515>Press ` and write \".079 suicide\" to kill yourself.</color>";
 		public string UltUsageFirstLine { get; set; } = "Usage: .079 ultimate <name>";
 		public string MiniDisabled { get; set; } = "disabled";
 		public string TipsCmd { get; set; } = "tips";

@@ -20,11 +20,11 @@ namespace ChaosCommand
 
 		public int CurrentCooldown { get; set; }
 
-		public int Cooldown => plugin.Config.CommandCooldown;
+		public int Cooldown => plugin.Config.Cooldown;
 
-		public int MinLevel => plugin.Config.CommandLevel;
+		public int MinLevel => plugin.Config.Level;
 
-		public int APCost => plugin.Config.CommandCost;	
+		public int APCost => plugin.Config.Cost;	
 
 		public string CallCommand(string[] args, Player player, CommandOutput output)
 		{

@@ -1,5 +1,4 @@
 ﻿using Exiled.API.Interfaces;
-using System.ComponentModel;
 
 namespace TeslaCommand
 {
@@ -7,13 +6,12 @@ namespace TeslaCommand
     {
         public bool IsEnabled { get; set; } = true;
 
-        public int CommandCost { get; set; } = 40;
+        public int Cost { get; set; } = 40;
 
-        public int CommandLevel { get; set; } = 1;
+        public int Level { get; set; } = 1;
 
         public int TeslaRemaining { get; set; } = 5;
 
-        [Description("Translatables")]
         public Translations Translations { get; set; } = new Translations();
     }
 

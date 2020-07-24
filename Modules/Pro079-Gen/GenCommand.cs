@@ -24,11 +24,11 @@ namespace GeneratorCommand
 
 		public bool Cassie => true;
 
-		public int Cooldown => plugin.Config.CommandCooldown;
+		public int Cooldown => plugin.Config.Cooldown;
 
-		public int MinLevel => plugin.Config.CommandLevel;
+		public int MinLevel => plugin.Config.Level;
 
-		public int APCost => plugin.Config.CommandCost;
+		public int APCost => plugin.Config.Cost;
 
 		public string CommandReady => plugin.Config.Translations.GenReady;
 
@@ -36,7 +36,7 @@ namespace GeneratorCommand
 
 		public string CallCommand(string[] args, Player player, CommandOutput output)
 		{
-			int blackcost = APCost + plugin.Config.CommandCostBlackout;
+			int blackcost = APCost + plugin.Config.CostBlackout;
 			if(args.Length == 0)
 			{
 				output.Success = false;
@@ -54,7 +54,7 @@ namespace GeneratorCommand
 				case "5":
 					if (!player.IsBypassModeEnabled)
 					{
-						if (player.Level < plugin.Config.CommandLevelBlackout - 1)
+						if (player.Level < plugin.Config.LevelBlackout - 1)
 						{
 							output.Success = false;
 							return Pro079.Manager.LowLevel(MinLevel);
@@ -69,15 +69,15 @@ namespace GeneratorCommand
 					MEC.Timing.RunCoroutine(Pro079Logic.Fake5Gens(), MEC.Segment.FixedUpdate);
 					Pro079.Manager.GiveExp(player, 80f);
 					Pro079.Manager.DrainAP(player, blackcost);
-					Pro079.Manager.SetOnCooldown(this, 70 + plugin.Config.CommandBlackoutPenalty + Cooldown);
+					Pro079.Manager.SetOnCooldown(this, 70 + plugin.Config.BlackoutPenalty + Cooldown);
 					return plugin.Config.Translations.Gen5Msg;
 				case "6":
 					if (!player.IsBypassModeEnabled)
 					{
-						if (player.Level < plugin.Config.CommandLevelBlackout - 1)
+						if (player.Level < plugin.Config.LevelBlackout - 1)
 						{
 							output.Success = false;
-							return Pro079.Manager.LowLevel(plugin.Config.CommandLevelBlackout);
+							return Pro079.Manager.LowLevel(plugin.Config.LevelBlackout);
 						}
 						if (player.Energy < blackcost)
 						{
@@ -89,7 +89,7 @@ namespace GeneratorCommand
 					MEC.Timing.RunCoroutine(Pro079Logic.SixthGen(), MEC.Segment.FixedUpdate);
 					Pro079.Manager.GiveExp(player, 50f);
 					Pro079.Manager.DrainAP(player, blackcost);
-					Pro079.Manager.SetOnCooldown(this, plugin.Config.CommandBlackoutPenalty + Cooldown);
+					Pro079.Manager.SetOnCooldown(this, plugin.Config.BlackoutPenalty + Cooldown);
 					return plugin.Config.Translations.Gen5Msg;
 				default:
 					output.Success = false;

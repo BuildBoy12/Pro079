@@ -16,11 +16,11 @@ namespace SCPCommand
 
 		public bool Cassie => true;
 
-		public int Cooldown => plugin.Config.CommandCooldown;
+		public int Cooldown => plugin.Config.Cooldown;
 
-		public int MinLevel => plugin.Config.CommandLevel;
+		public int MinLevel => plugin.Config.Level;
 
-		public int APCost => plugin.Config.CommandCost;
+		public int APCost => plugin.Config.Cost;
 
 		public string CommandReady => plugin.Config.Translations.ScpReady;
 
@@ -31,13 +31,13 @@ namespace SCPCommand
 			if (args.Length < 2)
 			{
 				output.Success = false;
-				return plugin.Config.Translations.ScpUse.Replace("$min", plugin.Config.CommandCost.ToString());
+				return plugin.Config.Translations.ScpUse.Replace("$min", plugin.Config.Cost.ToString());
 			}
 
 			if (!plugin.Config.ScpList.Contains(args[0]))
 			{
 				output.Success = false;
-				return plugin.Config.Translations.ScpExist + " - " + plugin.Config.Translations.ScpUse.Replace("$min", plugin.Config.CommandCost.ToString());
+				return plugin.Config.Translations.ScpExist + " - " + plugin.Config.Translations.ScpUse.Replace("$min", plugin.Config.Cost.ToString());
 			}
 			string scpNum = string.Join(" ", args[0].ToCharArray());
 			string broadcast = "scp " + scpNum;

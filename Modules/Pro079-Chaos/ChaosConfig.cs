@@ -1,5 +1,4 @@
 ﻿using Exiled.API.Interfaces;
-using System.ComponentModel;
 
 namespace ChaosCommand
 {
@@ -7,16 +6,12 @@ namespace ChaosCommand
     {
         public bool IsEnabled { get; set; } = true;
 
-        [Description("Cooldown between uses of the chaos command.")]
-        public int CommandCooldown { get; set; } = 50;
+        public int Cooldown { get; set; } = 50;
 
-        [Description("Amount of AP for the command to consume.")]
-        public int CommandCost { get; set; } = 50;
+        public int Cost { get; set; } = 50;
 
-        [Description("Minimum level a 079 must be to use this command.")]
-        public int CommandLevel { get; set; } = 2;
+        public int Level { get; set; } = 2;
 
-        [Description("C.A.S.S.I.E. announcement that will play when the command is used.")]
         public string BroadcastMessage { get; set; } = "warning . chaosinsurgency detected in the surface";
 
         public Translations Translations { get; set; } = new Translations();

@@ -43,9 +43,9 @@ namespace TeslaCommand
 
 		public int Cooldown => 0;
 
-		public int MinLevel => plugin.Config.CommandLevel;
+		public int MinLevel => plugin.Config.Level;
 
-		public int APCost => plugin.Config.CommandCost;
+		public int APCost => plugin.Config.Cost;
 
 		public string CommandReady => string.Empty;
 

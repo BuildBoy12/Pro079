@@ -1,19 +1,17 @@
 ﻿using Exiled.API.Interfaces;
 using System.Collections.Generic;
-using System.ComponentModel;
 
 namespace SCPCommand
 {
     public sealed class Config : IConfig
     {
         public bool IsEnabled { get; set; } = true;
-		public int CommandCooldown { get; set; } = 30;
-		public int CommandCost { get; set; } = 40;
-		public int CommandLevel { get; set; } = 1;
+		public int Cooldown { get; set; } = 30;
+		public int Cost { get; set; } = 40;
+		public int Level { get; set; } = 1;
 		public List<string> ScpList { get; set; } = 
 		   new List<string> { "173", "096", "106", "049", "939" };
 
-		[Description("Translatables")]
         public Translations Translations { get; set; } = new Translations();
     }
 
