@@ -3,10 +3,15 @@ A plugin to enhance playing 079 by giving it some fancy commands to play with, b
 
 # Configs
 
-**Check the wiki to get a detailed explanation of every single config here:** https://github.com/RogerFK/pro079/wiki
+**Check the wiki to get a detailed explanation of every single config here:** https://github.com/BuildBoy12/pro079/wiki
 
 # Translations
-These will auto-generate in the Exiled config folder as well under their own category.
+These will auto-generate in the Exiled config folder as well under their own category, and are free for you to modify as you please.
+
+## Aliases
+Each of the included modules have a x_cmd translation config, such as `teslacmd: te`, can be edited to change the base command.
+
+Take into account these will not change what the `.079` command will state. For this reason, it is highly recommended to match your translations throughout your configs. If you're really going to modify it, it's because you're translating things like "suicide" to, let's say, "Selbstmord" in german, so you're probably going to have to end up checking everything. This is to give full control to the users to rearrange, change, etc. without sacrificing CPU to do 1000 checks/changes in the same frame, which could end up delaying the entire server.
 
 # API Guide
 
