@@ -1,7 +1,5 @@
 # Important info
-To use translations, you only have to place 1 .txt file inside sm_translations, and it will automatically register them. If you change it to <whatever>.txt, it will not create a new file unless you're missing some translation
-
-That means that you just have to download one of these translations and place it inside your `sm_translations` folder, which is right below your `sm_plugin` folder
+To use these translations, for the moment at least, you'll have to copy and paste the desired translations into their respective areas in the Exiled Config.
 
 # Credits
  - Spanish and English translations made by RogerFK
