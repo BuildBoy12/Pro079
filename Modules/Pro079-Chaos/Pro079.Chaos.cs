@@ -1,10 +1,9 @@
 ﻿using Exiled.API.Features;
 using Pro079Core;
-using System;
 
 namespace ChaosCommand
 {
-	public class ChaosPlugin : Plugin<Config>
+    public class ChaosPlugin : Plugin<Config>
 	{
 		public override void OnEnabled()
 		{

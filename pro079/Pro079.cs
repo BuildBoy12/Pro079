@@ -20,10 +20,6 @@ namespace Pro079Core
 			}
 		}
 
-		private static readonly Lazy<Pro079> LazyInstance = new Lazy<Pro079>(() => new Pro079());
-		private Pro079() { }
-		public static Pro079 ConfigRef => LazyInstance.Value;
-
 		public override void OnEnabled()
 		{
 			base.OnEnabled();

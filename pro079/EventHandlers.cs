@@ -1,12 +1,12 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Exiled.API.Features;
+using Exiled.Events.EventArgs;
+using Pro079Core.API;
+
 namespace Pro079Core
 {
-	using System;
-	using System.Collections.Generic;
-	using System.Linq;
-	using Exiled.API.Features;
-	using Exiled.Events.EventArgs;
-	using Pro079Core.API;
-
 	public class EventHandlers
 	{
 		public Pro079 plugin;
@@ -19,10 +19,10 @@ namespace Pro079Core
 				ev.Allow = false;
 				if (ev.Player.Role != RoleType.Scp079)
 				{
-					ev.ReturnMessage = Pro079.ConfigRef.Config.Translations.NotScp079;
+					ev.ReturnMessage = plugin.Config.Translations.NotScp079;
 					return;
 				}
-				ev.ReturnMessage = Pro079.ConfigRef.Config.Translations.Error;
+				ev.ReturnMessage = plugin.Config.Translations.Error;
 				if (ev.Arguments.Count == 0)
 				{
 					ev.Color = "white";
@@ -30,34 +30,34 @@ namespace Pro079Core
 				}
 				else if (ev.Arguments.Count >= 1)
 				{
-					if (ev.Arguments[0] == Pro079.ConfigRef.Config.Translations.TipsCmd)
+					if (ev.Arguments[0] == plugin.Config.Translations.TipsCmd)
 					{
-						if (!Pro079.ConfigRef.Config.EnableTips)
+						if (!plugin.Config.EnableTips)
 						{
-							ev.ReturnMessage = Pro079.ConfigRef.Config.Translations.Disabled;
+							ev.ReturnMessage = plugin.Config.Translations.Disabled;
 							return;
 						}
-						ev.Player.SendConsoleMessage(Pro079.ConfigRef.Config.Translations.TipsMsg.Replace("\\n", "\n"), "white");
+						ev.Player.SendConsoleMessage(plugin.Config.Translations.TipsMsg.Replace("\\n", "\n"), "white");
 						ev.ReturnMessage = "<Made by RogerFK#3679, Ported by BuildBoy12#6125>";
 						return;
 					}
-					else if (ev.Arguments[0] == Pro079.ConfigRef.Config.Translations.SuicideCmd)
+					else if (ev.Arguments[0] == plugin.Config.Translations.SuicideCmd)
 					{
-						if (!Pro079.ConfigRef.Config.SuicideCommand)
+						if (!plugin.Config.SuicideCommand)
 						{
-							ev.ReturnMessage = Pro079.ConfigRef.Config.Translations.Disabled;
+							ev.ReturnMessage = plugin.Config.Translations.Disabled;
 							return;
 						}
 						int pcs = Scp079PlayerScript.instances.Count();
 						if (Player.List.Where(x => x.Team == Team.SCP).Count() - pcs != 0)
 						{
-							ev.ReturnMessage = Pro079.ConfigRef.Config.Translations.CantSuicide;
+							ev.ReturnMessage = plugin.Config.Translations.CantSuicide;
 							return;
 						}
 						MEC.Timing.RunCoroutine(Pro079Logic.SixthGen(ev.Player), MEC.Segment.FixedUpdate);
 						return;
 					}
-					if (ev.Arguments[0] == Pro079.ConfigRef.Config.Translations.UltCmd)
+					if (ev.Arguments[0] == plugin.Config.Translations.UltCmd)
 					{
 						if (ev.Arguments.Count == 1)
 						{
@@ -67,20 +67,20 @@ namespace Pro079Core
 						}
 						if (Pro079.Manager.UltimateCooldown > 0)
 						{
-							Pro079.ConfigRef.Config.Translations.UltDown.Replace("$cd", Pro079.Manager.UltimateCooldown.ToString());
+							plugin.Config.Translations.UltDown.Replace("$cd", Pro079.Manager.UltimateCooldown.ToString());
 							return;
 						}
 						IUltimate079 ultimate = Pro079.Manager.GetUltimate(string.Join(" ", ev.Arguments.Skip(1).ToArray()));
 						if (ultimate == null)
 						{
-							ev.ReturnMessage = Pro079.ConfigRef.Config.Translations.UltError;
+							ev.ReturnMessage = plugin.Config.Translations.UltError;
 							return;
 						}
 						if (!ev.Player.IsBypassModeEnabled)
 						{
-							if (ev.Player.Level + 1 < Pro079.ConfigRef.Config.UltimateLevel)
+							if (ev.Player.Level + 1 < plugin.Config.UltimateLevel)
 							{
-								ev.ReturnMessage = Pro079.Manager.LowLevel(Pro079.ConfigRef.Config.UltimateLevel);
+								ev.ReturnMessage = Pro079.Manager.LowLevel(plugin.Config.UltimateLevel);
 								return;
 							}
 							if (ev.Player.Energy < ultimate.Cost)
@@ -99,7 +99,7 @@ namespace Pro079Core
 					// When everything else wasn't caught, search for external commands //
 					if (!Pro079.Manager.Commands.TryGetValue(ev.Arguments[0], out ICommand079 CommandHandler))
 					{
-						ev.ReturnMessage = Pro079.ConfigRef.Config.Translations.UnknownCmd;
+						ev.ReturnMessage = plugin.Config.Translations.UnknownCmd;
 						return;
 					}
 					if (!ev.Player.IsBypassModeEnabled)
@@ -125,7 +125,7 @@ namespace Pro079Core
 							if (Pro079.Manager.CassieCooldown > 0)
 							{
 								ev.Color = "white";
-								ev.ReturnMessage = Pro079.ConfigRef.Config.Translations.CassieOnCooldown.Replace("$cd", Pro079.Manager.CassieCooldown.ToString()).Replace("$(cd)", Pro079.Manager.CassieCooldown.ToString());
+								ev.ReturnMessage = plugin.Config.Translations.CassieOnCooldown.Replace("$cd", Pro079.Manager.CassieCooldown.ToString()).Replace("$(cd)", Pro079.Manager.CassieCooldown.ToString());
 								return;
 							}
 						}
@@ -145,12 +145,12 @@ namespace Pro079Core
 
 							if (CommandHandler.Cassie && output.CassieCooldown)
 							{
-								Pro079.Manager.CassieCooldown = Pro079.ConfigRef.Config.CassieCooldown;
-								if (!string.IsNullOrEmpty(Pro079.ConfigRef.Config.Translations.CassieReady))
+								Pro079.Manager.CassieCooldown = plugin.Config.CassieCooldown;
+								if (!string.IsNullOrEmpty(plugin.Config.Translations.CassieReady))
 								{
 									int p = (int)System.Environment.OSVersion.Platform;
-									if ((p == 4) || (p == 6) || (p == 128)) MEC.Timing.RunCoroutine(Pro079Logic.CooldownCassie(Pro079.ConfigRef.Config.CassieCooldown), MEC.Segment.Update);
-									else MEC.Timing.RunCoroutine(Pro079Logic.CooldownCassie(Pro079.ConfigRef.Config.CassieCooldown), 1);
+									if ((p == 4) || (p == 6) || (p == 128)) MEC.Timing.RunCoroutine(Pro079Logic.CooldownCassie(plugin.Config.CassieCooldown), MEC.Segment.Update);
+									else MEC.Timing.RunCoroutine(Pro079Logic.CooldownCassie(plugin.Config.CassieCooldown), 1);
 								} 
 							}
 						}
@@ -162,7 +162,7 @@ namespace Pro079Core
 					catch (Exception e)
 					{
 						Log.Error($"Error with command \"{ev.Arguments[0]}\" and literally not my problem:\n" + e);
-						ev.ReturnMessage = Pro079.ConfigRef.Config.Translations.Error + ": " + e.Message;
+						ev.ReturnMessage = plugin.Config.Translations.Error + ": " + e.Message;
 					}
 				}
 			}
@@ -172,7 +172,7 @@ namespace Pro079Core
 		{
 			try
 			{
-				if (!Pro079.ConfigRef.Config.EnableSpawnBroadcast)
+				if (!plugin.Config.EnableSpawnBroadcast)
 				{
 					return;
 				}

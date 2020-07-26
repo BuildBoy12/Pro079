@@ -39,13 +39,15 @@
   <ItemGroup>
     <Reference Include="Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\1 - EXILED 2.0 Ready Plugins\EndConditions-master (1)\EndConditions-master\EndConditions\bin\Debug\Assembly-CSharp-firstpass.dll</HintPath>
+      <HintPath>..\ModuleDLLs\Assembly-CSharp-firstpass.dll</HintPath>
     </Reference>
-    <Reference Include="Assembly-CSharp_publicized">
-      <HintPath>..\..\..\1 - EXILED 2.0 Ready Plugins\EndConditions-master (1)\EndConditions-master\EndConditions\bin\Debug\Assembly-CSharp_publicized.dll</HintPath>
+    <Reference Include="Assembly-CSharp_publicized, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\ModuleDLLs\Assembly-CSharp_publicized.dll</HintPath>
     </Reference>
-    <Reference Include="Mirror">
-      <HintPath>D:\Source Codes\References\Mirror.dll</HintPath>
+    <Reference Include="Mirror, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\References\Mirror.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -65,9 +67,6 @@
     <Reference Include="UnityEngine.Networking">
       <HintPath>..\Lib\UnityEngine.Networking.dll</HintPath>
     </Reference>
-    <Reference Include="YamlDotNet">
-      <HintPath>..\..\..\1 - EXILED 2.0 Ready Plugins\EndConditions-master (1)\EndConditions-master\EndConditions\bin\Debug\YamlDotNet.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="API\CommandOutput.cs" />
@@ -81,7 +80,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="EXILED">
-      <Version>2.0.5</Version>
+      <Version>2.0.7</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

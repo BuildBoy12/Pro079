@@ -34,20 +34,20 @@ namespace Pro079Core
 			Help = new List<string>(Pro079.Manager.Commands.Keys.Count);
 			foreach (KeyValuePair<string, ICommand079> kvp in Pro079.Manager.Commands)
 			{
-				Help.Add($"<b>.079 {kvp.Key + (!string.IsNullOrEmpty(kvp.Value.ExtraArguments) ? " " + kvp.Value.ExtraArguments : string.Empty)}</b> - {kvp.Value.HelpInfo} {FormatEnergyLevel(kvp.Value.APCost, kvp.Value.MinLevel, Pro079.ConfigRef.Config.Translations.Energy, Pro079.ConfigRef.Config.Translations.Level)}");
+				Help.Add($"<b>.079 {kvp.Key + (!string.IsNullOrEmpty(kvp.Value.ExtraArguments) ? " " + kvp.Value.ExtraArguments : string.Empty)}</b> - {kvp.Value.HelpInfo} {FormatEnergyLevel(kvp.Value.APCost, kvp.Value.MinLevel, Pro079.Instance.Config.Translations.Energy, Pro079.Instance.Config.Translations.Level)}");
 			}
 		}
 		internal static string GetHelp()
 		{
-			string help = Pro079.ConfigRef.Config.Translations.BasicHelp;
+			string help = Pro079.Instance.Config.Translations.BasicHelp;
 			if (Help == null || Help.Count != Pro079.Manager.Commands.Keys.Count) FetchExternalHelp();
 			foreach (string line in Help)
 			{
 				help += Environment.NewLine + line;
 			}
-			if (Pro079.Instance.Config.SuicideCommand) help += Environment.NewLine + $"<b>.079 {Pro079.ConfigRef.Config.Translations.SuicideCmd}</b> - " + Pro079.ConfigRef.Config.Translations.SuicideHelp;
-			if (Pro079.Instance.Config.EnableUltimates) help += Environment.NewLine + $"<b>.079 {Pro079.ConfigRef.Config.Translations.UltCmd}</b> - " + Pro079.ConfigRef.Config.Translations.UltHelp;
-			if (Pro079.Instance.Config.EnableTips) help += Environment.NewLine + $"<b>.079 {Pro079.ConfigRef.Config.Translations.TipsCmd}</b> - " + Pro079.ConfigRef.Config.Translations.TipsHelp;
+			if (Pro079.Instance.Config.SuicideCommand) help += Environment.NewLine + $"<b>.079 {Pro079.Instance.Config.Translations.SuicideCmd}</b> - " + Pro079.Instance.Config.Translations.SuicideHelp;
+			if (Pro079.Instance.Config.EnableUltimates) help += Environment.NewLine + $"<b>.079 {Pro079.Instance.Config.Translations.UltCmd}</b> - " + Pro079.Instance.Config.Translations.UltHelp;
+			if (Pro079.Instance.Config.EnableTips) help += Environment.NewLine + $"<b>.079 {Pro079.Instance.Config.Translations.TipsCmd}</b> - " + Pro079.Instance.Config.Translations.TipsHelp;
 			return help;
 		}
 		private static List<string> UltimateHelp;
@@ -56,7 +56,7 @@ namespace Pro079Core
 			UltimateHelp = new List<string>(Pro079.Manager.Ultimates.Keys.Count);
 			foreach (KeyValuePair<string, IUltimate079> kvp in Pro079.Manager.Ultimates)
 			{
-				string HelpMsg = $"<b>.079 {Pro079.ConfigRef.Config.Translations.UltCmd} {kvp.Key}</b> - {kvp.Value.Info} {Pro079.ConfigRef.Config.Translations.UltData}";
+				string HelpMsg = $"<b>.079 {Pro079.Instance.Config.Translations.UltCmd} {kvp.Key}</b> - {kvp.Value.Info} {Pro079.Instance.Config.Translations.UltData}";
 				UltimateHelp.Add(Pro079.Manager.ReplaceAfterToken(HelpMsg, '$', new Tuple<string, object>[]
 				{
 					new Tuple<string, object>("cd", kvp.Value.Cooldown),
@@ -66,7 +66,7 @@ namespace Pro079Core
 		}
 		internal static string GetUltimates()
 		{
-			string help = Pro079.ConfigRef.Config.Translations.UltUsageFirstLine;
+			string help = Pro079.Instance.Config.Translations.UltUsageFirstLine;
 			if (UltimateHelp == null || UltimateHelp.Count != Pro079.Manager.Ultimates.Keys.Count) FetchUltimates();
 			foreach (string line in UltimateHelp)
 			{
@@ -96,7 +96,7 @@ namespace Pro079Core
 			if (player.Role == RoleType.Scp079)
 			{
 				player.ClearBroadcasts();
-				player.Broadcast(20, Pro079.ConfigRef.Config.Translations.BroadcastMsg, Broadcast.BroadcastFlags.Normal);
+				player.Broadcast(20, Pro079.Instance.Config.Translations.BroadcastMsg, Broadcast.BroadcastFlags.Normal);
 				player.SendConsoleMessage(GetHelp(), "white");
 			}
 		}
@@ -182,20 +182,19 @@ namespace Pro079Core
 				IEnumerable<Player> PCplayers = Player.List.Where(x => x.Role == RoleType.Scp079);
 				foreach (Player player in PCplayers)
 				{
-					player.Broadcast(3, Pro079.ConfigRef.Config.Translations.CassieReady, Broadcast.BroadcastFlags.Normal);
-				}
-				
+					player.Broadcast(3, Pro079.Instance.Config.Translations.CassieReady, Broadcast.BroadcastFlags.Normal);
+				}				
 			}
 		}
 		internal static IEnumerator<float> DelayKysMessage(IEnumerable<Player> PCplayers)
 		{
-			if (string.IsNullOrEmpty(Pro079.ConfigRef.Config.Translations.Kys)) yield break;
+			if (string.IsNullOrEmpty(Pro079.Instance.Config.Translations.Kys)) yield break;
 			yield return Timing.WaitForSeconds(0.3f);
 			if (Player.List.Where(x => x.Team == Team.SCP).Count() - PCplayers.Count() == 0)
 			{
 				foreach (Player player in PCplayers)
 				{
-					player.Broadcast(20, Pro079.ConfigRef.Config.Translations.Kys, Broadcast.BroadcastFlags.Normal);
+					player.Broadcast(20, Pro079.Instance.Config.Translations.Kys, Broadcast.BroadcastFlags.Normal);
 				}
 			}
 		}

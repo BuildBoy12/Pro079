@@ -1,9 +1,8 @@
 ﻿using Exiled.API.Features;
-using System;
 
 namespace SCPCommand
 {
-	public class SCPPlugin : Plugin<Config>
+    public class SCPPlugin : Plugin<Config>
 	{
 		public override void OnEnabled()
 		{

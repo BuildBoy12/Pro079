@@ -1,10 +1,8 @@
 ﻿using Exiled.API.Features;
-using System;
-using System.Collections.Generic;
 
 namespace Pro079Core.API
 {
-	public interface ICommand079
+    public interface ICommand079
 	{
 		//////////////////////////////////////////////////////
 		//					  BASIC DATA					//

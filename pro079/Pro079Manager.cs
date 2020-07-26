@@ -118,11 +118,11 @@ namespace Pro079Core
 		{
 			UltimateCooldown = Ultimate.Cooldown + Round.ElapsedTime.Seconds;
 
-			if (!string.IsNullOrEmpty(Pro079.ConfigRef.Config.Translations.UltReady) || Pro079.ConfigRef.Config.Translations.UltReady == "disable" || Pro079.ConfigRef.Config.Translations.UltReady == "disabled" || Pro079.ConfigRef.Config.Translations.UltReady == "none" || Pro079.ConfigRef.Config.Translations.UltReady == "null")
+			if (!string.IsNullOrEmpty(Pro079.Instance.Config.Translations.UltReady) || Pro079.Instance.Config.Translations.UltReady == "disable" || Pro079.Instance.Config.Translations.UltReady == "disabled" || Pro079.Instance.Config.Translations.UltReady == "none" || Pro079.Instance.Config.Translations.UltReady == "null")
 			{
 				int p = (int)Environment.OSVersion.Platform;
-				if ((p == 4) || (p == 6) || (p == 128)) MEC.Timing.RunCoroutine(DelayMessage(Pro079.ConfigRef.Config.Translations.UltReady, Ultimate.Cooldown), MEC.Segment.Update);
-				else MEC.Timing.RunCoroutine(DelayMessage(Pro079.ConfigRef.Config.Translations.UltReady, Ultimate.Cooldown), 1);
+				if ((p == 4) || (p == 6) || (p == 128)) MEC.Timing.RunCoroutine(DelayMessage(Pro079.Instance.Config.Translations.UltReady, Ultimate.Cooldown), MEC.Segment.Update);
+				else MEC.Timing.RunCoroutine(DelayMessage(Pro079.Instance.Config.Translations.UltReady, Ultimate.Cooldown), 1);
 
 			}
 		}
@@ -236,13 +236,13 @@ namespace Pro079Core
 		/// <returns>The translated level string</returns>
 		public string LevelString(int Level, bool Uppercase)
 		{
-			if (Uppercase || char.IsDigit(Pro079.ConfigRef.Config.Translations.Level[0]))
+			if (Uppercase || char.IsDigit(Pro079.Instance.Config.Translations.Level[0]))
 			{
-				return char.ToUpper(Pro079.ConfigRef.Config.Translations.Level[0])
-					+ Pro079.ConfigRef.Config.Translations.Level.Substring(1).Replace("$lvl", Level.ToString());
+				return char.ToUpper(Pro079.Instance.Config.Translations.Level[0])
+					+ Pro079.Instance.Config.Translations.Level.Substring(1).Replace("$lvl", Level.ToString());
 			}
 
-			return Pro079.ConfigRef.Config.Translations.Level.Replace("$lvl", Level.ToString());
+			return Pro079.Instance.Config.Translations.Level.Replace("$lvl", Level.ToString());
 		}
 		/// <summary>
 		/// Gets the translated string for AP. Something like: "{number} AP"
@@ -252,13 +252,13 @@ namespace Pro079Core
 		/// <returns>The translated AP string</returns>
 		public string APString(int AP, bool Uppercase)
 		{
-			if (Uppercase || char.IsDigit(Pro079.ConfigRef.Config.Translations.Level[0]))
+			if (Uppercase || char.IsDigit(Pro079.Instance.Config.Translations.Level[0]))
 			{
-				return char.ToUpper(Pro079.ConfigRef.Config.Translations.Level[0])
-					 + Pro079.ConfigRef.Config.Translations.Level.Substring(1).Replace("$ap", AP.ToString());
+				return char.ToUpper(Pro079.Instance.Config.Translations.Level[0])
+					 + Pro079.Instance.Config.Translations.Level.Substring(1).Replace("$ap", AP.ToString());
 			}
 
-			return Pro079.ConfigRef.Config.Translations.Level.Replace("$ap", AP.ToString());
+			return Pro079.Instance.Config.Translations.Level.Replace("$ap", AP.ToString());
 		}
 		/// <summary>
 		/// Gets the "Not enough AP (you need $min)" but translated
@@ -267,7 +267,7 @@ namespace Pro079Core
 		/// <returns>The translated string</returns>
 		public string LowAP(int MinAP)
 		{
-			return Min(Pro079.ConfigRef.Config.Translations.LowMana, MinAP);
+			return Min(Pro079.Instance.Config.Translations.LowMana, MinAP);
 		}
 		/// <summary>
 		/// Gets the "Your level is too low (you need $min)" but translated
@@ -276,7 +276,7 @@ namespace Pro079Core
 		/// <returns>The translated string</returns>
 		public string LowLevel(int MinLevel)
 		{
-			return Min(Pro079.ConfigRef.Config.Translations.LowLevel, MinLevel);
+			return Min(Pro079.Instance.Config.Translations.LowLevel, MinLevel);
 		}
 		private string Min(string str, int number)
 		{
@@ -287,20 +287,20 @@ namespace Pro079Core
 		/// </summary>
 		public string CmdOnCooldown(int Cooldown)
 		{
-			return Pro079.ConfigRef.Config.Translations.Cooldown.Replace("$cd", Cooldown.ToString());
+			return Pro079.Instance.Config.Translations.Cooldown.Replace("$cd", Cooldown.ToString());
 		}
 
 		/// <summary>
 		/// Translated "This command is disabled."
 		/// </summary>
-		public string CommandDisabled => Pro079.ConfigRef.Config.Translations.Disabled;
+		public string CommandDisabled => Pro079.Instance.Config.Translations.Disabled;
 		/// <summary>
 		/// Translated "Command succesfully launched".
 		/// </summary>
-		public string CommandSuccess => Pro079.ConfigRef.Config.Translations.Success;
+		public string CommandSuccess => Pro079.Instance.Config.Translations.Success;
 		/// <summary>
 		/// Translated "Ultimate succesfully used."
 		/// </summary>
-		public string UltimateLaunched => Pro079.ConfigRef.Config.Translations.UltLaunched;
+		public string UltimateLaunched => Pro079.Instance.Config.Translations.UltLaunched;
 	}
 }
