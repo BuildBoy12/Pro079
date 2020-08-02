@@ -19,3 +19,7 @@ This plugin features an API with which you can add new commands/ultimates via pl
 Please, check this one for reference, and use it as a template to get things done quick: https://github.com/BuildBoy12/Pro079Template
 
 As well as this is a really poorly detailed template, it's the basics and you could explore everything else for yourself by checking the [Manager.cs](https://github.com/BuildBoy12/pro079/blob/master/pro079/Pro079Manager.cs) and [Config079.cs](https://github.com/BuildBoy12/pro079/blob/master/pro079/Config079.cs) classes themselves.
+
+***
+
+### Massive thanks to RogerFK, the original dev on this plugin, for making the framework for what it is now.

@@ -1,4 +1,6 @@
 ﻿using Exiled.API.Features;
+using Player = Exiled.Events.Handlers.Player;
+using Server = Exiled.Events.Handlers.Server;
 
 namespace LockdownUltimate
 {
@@ -10,16 +12,16 @@ namespace LockdownUltimate
 		{
 			base.OnEnabled();
 			LockdownUltimate = new LockdownUltimate(this);
-			Exiled.Events.Handlers.Player.InteractingDoor += LockdownUltimate.OnDoorAccess;
-			Exiled.Events.Handlers.Server.WaitingForPlayers += LockdownUltimate.OnWaitingForPlayers;
-			Pro079Core.Pro079Manager.Manager.RegisterUltimate(LockdownUltimate);	
+			Player.InteractingDoor += LockdownUltimate.OnDoorAccess;
+            Server.WaitingForPlayers += LockdownUltimate.OnWaitingForPlayers;
+			Pro079Core.Pro079.Manager.RegisterUltimate(LockdownUltimate);	
 		}
 
 		public override void OnDisabled()
 		{
-			base.OnDisabled();
-			Exiled.Events.Handlers.Player.InteractingDoor -= LockdownUltimate.OnDoorAccess;
-			Exiled.Events.Handlers.Server.WaitingForPlayers -= LockdownUltimate.OnWaitingForPlayers;
+            base.OnDisabled();
+            Player.InteractingDoor -= LockdownUltimate.OnDoorAccess;
+            Server.WaitingForPlayers -= LockdownUltimate.OnWaitingForPlayers;
 			LockdownUltimate = null;
 		}
 

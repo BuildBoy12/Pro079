@@ -1,5 +1,6 @@
 ﻿using Exiled.API.Features;
 using Pro079Core;
+using Server = Exiled.Events.Handlers.Server;
 
 namespace InfoCommand
 {
@@ -11,16 +12,16 @@ namespace InfoCommand
 		{
 			base.OnEnabled();
 			InfoCommand = new InfoCommand(this);
-			Exiled.Events.Handlers.Server.RespawningTeam += InfoCommand.OnTeamRespawn;
-			Exiled.Events.Handlers.Server.WaitingForPlayers += InfoCommand.OnWaitingForPlayers;
+            Server.RespawningTeam += InfoCommand.OnTeamRespawn;
+            Server.WaitingForPlayers += InfoCommand.OnWaitingForPlayers;
 			Pro079.Manager.RegisterCommand(InfoCommand);
 		}
 
 		public override void OnDisabled()
 		{
 			base.OnDisabled();
-			Exiled.Events.Handlers.Server.RespawningTeam -= InfoCommand.OnTeamRespawn;
-			Exiled.Events.Handlers.Server.WaitingForPlayers -= InfoCommand.OnWaitingForPlayers;
+            Server.RespawningTeam -= InfoCommand.OnTeamRespawn;
+            Server.WaitingForPlayers -= InfoCommand.OnWaitingForPlayers;
 			InfoCommand = null;
 		}
 		

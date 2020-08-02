@@ -1,5 +1,6 @@
 ﻿using Exiled.API.Features;
-using System;
+using Server = Exiled.Events.Handlers.Server;
+using Player = Exiled.Events.Handlers.Player;
 
 namespace Pro079Core
 {
@@ -24,20 +25,20 @@ namespace Pro079Core
 		{
 			base.OnEnabled();
 			EventHandlers = new EventHandlers(this);
-			Exiled.Events.Handlers.Server.WaitingForPlayers += EventHandlers.OnWaitingForPlayers;
-			Exiled.Events.Handlers.Server.SendingConsoleCommand += EventHandlers.OnCallCommand;
-			Exiled.Events.Handlers.Player.ChangingRole += EventHandlers.OnSetRole;
-			Exiled.Events.Handlers.Player.Died += EventHandlers.OnPlayerDie;
+            Server.WaitingForPlayers += EventHandlers.OnWaitingForPlayers;
+            Server.SendingConsoleCommand += EventHandlers.OnCallCommand;
+            Player.ChangingRole += EventHandlers.OnSetRole;
+            Player.Died += EventHandlers.OnPlayerDie;
 			Instance = this;
 		}
 
 		public override void OnDisabled()
 		{
 			base.OnDisabled();
-			Exiled.Events.Handlers.Server.WaitingForPlayers -= EventHandlers.OnWaitingForPlayers;
-			Exiled.Events.Handlers.Server.SendingConsoleCommand -= EventHandlers.OnCallCommand;
-			Exiled.Events.Handlers.Player.ChangingRole -= EventHandlers.OnSetRole;
-			Exiled.Events.Handlers.Player.Died -= EventHandlers.OnPlayerDie;
+            Server.WaitingForPlayers -= EventHandlers.OnWaitingForPlayers;
+            Server.SendingConsoleCommand -= EventHandlers.OnCallCommand;
+            Player.ChangingRole -= EventHandlers.OnSetRole;
+            Player.Died -= EventHandlers.OnPlayerDie;
 			EventHandlers = null;
 		}
 

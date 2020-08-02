@@ -2,6 +2,7 @@
 using Pro079Core;
 using Pro079Core.API;
 using System.Collections.Generic;
+using Server = Exiled.Events.Handlers.Server;
 
 namespace TeslaCommand
 {
@@ -13,14 +14,14 @@ namespace TeslaCommand
 		{
 			base.OnEnabled();
 			TeslaCommand = new TeslaCommand(this);
-			Exiled.Events.Handlers.Server.WaitingForPlayers += TeslaCommand.OnWaitingForPlayers;
+            Server.WaitingForPlayers += TeslaCommand.OnWaitingForPlayers;
 			Pro079.Manager.RegisterCommand(TeslaCommand);
 		}
 
 		public override void OnDisabled()
 		{
 			base.OnDisabled();
-			Exiled.Events.Handlers.Server.WaitingForPlayers -= TeslaCommand.OnWaitingForPlayers;
+            Server.WaitingForPlayers -= TeslaCommand.OnWaitingForPlayers;
 			TeslaCommand = null;
 		}
 
