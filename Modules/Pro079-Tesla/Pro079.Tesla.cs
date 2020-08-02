@@ -1,6 +1,7 @@
 ﻿using Exiled.API.Features;
 using Pro079Core;
 using Pro079Core.API;
+using System;
 using System.Collections.Generic;
 using Server = Exiled.Events.Handlers.Server;
 
@@ -27,6 +28,7 @@ namespace TeslaCommand
 
 		public override string Name => "Pro079.Tesla";
 		public override string Author => "Build";
+		public override Version RequiredExiledVersion => new Version(2, 0, 9);
 	}
 
 	public class TeslaCommand : ICommand079

@@ -1,4 +1,5 @@
 ﻿using Exiled.API.Features;
+using System;
 
 namespace Pro079MTF
 {
@@ -17,5 +18,6 @@ namespace Pro079MTF
 
 		public override string Name => "Pro079.MTF";
 		public override string Author => "Build";
+		public override Version RequiredExiledVersion => new Version(2, 0, 9);
 	}
 }

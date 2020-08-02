@@ -1,4 +1,5 @@
 ﻿using Exiled.API.Features;
+using System;
 
 namespace BlackoutUltimate
 {
@@ -17,5 +18,6 @@ namespace BlackoutUltimate
 
 		public override string Name => "Pro079.Ultimates.Blackout";
 		public override string Author => "Build";
-    }
+		public override Version RequiredExiledVersion => new Version(2, 0, 9);
+	}
 }

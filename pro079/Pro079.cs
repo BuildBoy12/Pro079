@@ -1,6 +1,7 @@
 ﻿using Exiled.API.Features;
 using Server = Exiled.Events.Handlers.Server;
 using Player = Exiled.Events.Handlers.Player;
+using System;
 
 namespace Pro079Core
 {
@@ -43,6 +44,7 @@ namespace Pro079Core
 		}
 
         public override string Name => "Pro079";
-        public override string Author => "Build"; 
+        public override string Author => "Build";
+        public override Version RequiredExiledVersion => new Version(2, 0, 9);
     }
 }

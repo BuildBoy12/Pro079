@@ -1,5 +1,6 @@
 ﻿using Exiled.API.Features;
 using Pro079Core;
+using System;
 using Server = Exiled.Events.Handlers.Server;
 
 namespace InfoCommand
@@ -27,5 +28,6 @@ namespace InfoCommand
 		
 		public override string Name => "Pro079.Info";
 		public override string Author => "Build";
+		public override Version RequiredExiledVersion => new Version(2, 0, 9);
 	}
 }
