@@ -7,7 +7,7 @@ namespace Pro079.Commands
     using MEC;
     using System;
 
-    [CommandHandler(typeof(RemoteAdminCommandHandler))]
+    [CommandHandler(typeof(ClientCommandHandler))]
     public class CentralCommand : ICommand
     {
         public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)

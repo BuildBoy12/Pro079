@@ -7,7 +7,7 @@
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-      <OutputPath>../../ModuleDLLs/net472/</OutputPath>
+      <OutputPath>../../ModuleDLLs/</OutputPath>
     </PropertyGroup>
 
     <ItemGroup>
