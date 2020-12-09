@@ -5,7 +5,6 @@ namespace Pro079Gas
     using Pro079.API.Interfaces;
     using System;
     using System.Linq;
-    using static Pro079Gas;
 
     public class GasCommand : ICommand079
     {
@@ -13,7 +12,7 @@ namespace Pro079Gas
         {
             Player ply = Player.Get((sender as CommandSender)?.SenderId);
             Room room = Map.FindParentRoom(ply.GameObject);
-            if (!room.Players.Any() || room.Players.All(player => player.Team == Team.SCP))
+            if (!room.Players.Any() || room.Players.All(player => player.IsHuman))
             {
                 response = Pro079Gas.Singleton.Translations.NoPlayersFound;
                 return false;
@@ -28,15 +27,15 @@ namespace Pro079Gas
             return true;
         }
 
-        public string Command => Singleton.Translations.Command;
+        public string Command => Pro079Gas.Singleton.Translations.Command;
         public string[] Aliases => Array.Empty<string>();
-        public string Description => Singleton.Translations.Description;
+        public string Description => Pro079Gas.Singleton.Translations.Description;
 
         public string ExtraArguments => string.Empty;
         public bool Cassie => false;
-        public int Cooldown => Singleton.Config.Cooldown;
-        public int MinLevel => Singleton.Config.Level;
-        public int Cost => Singleton.Config.Cost;
-        public string CommandReady => Singleton.Translations.CommandReady;
+        public int Cooldown => Pro079Gas.Singleton.Config.Cooldown;
+        public int MinLevel => Pro079Gas.Singleton.Config.Level;
+        public int Cost => Pro079Gas.Singleton.Config.Cost;
+        public string CommandReady => Pro079Gas.Singleton.Translations.CommandReady;
     }
 }
