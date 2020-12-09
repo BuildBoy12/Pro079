@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net472</TargetFramework>
+        <RootNamespace>Pro079Chaos</RootNamespace>
+        <LangVersion>8</LangVersion>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+      <OutputPath>../../ModuleDLLs/net472/</OutputPath>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="EXILED" Version="2.1.18" />
+      <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net472" Version="1.0.0">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <HintPath>..\..\ModuleDLLs\net472\Assembly-CSharp_publicized.dll</HintPath>
+      </Reference>
+      <Reference Include="Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <HintPath>..\..\ModuleDLLs\net472\Assembly-CSharp-firstpass.dll</HintPath>
+      </Reference>
+      <Reference Include="CommandSystem.Core, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <HintPath>..\..\ModuleDLLs\net472\CommandSystem.Core.dll</HintPath>
+      </Reference>
+      <Reference Include="Mirror, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <HintPath>..\..\ModuleDLLs\net472\Mirror.dll</HintPath>
+      </Reference>
+      <Reference Include="Pro079, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <HintPath>..\..\ModuleDLLs\net472\Pro079.dll</HintPath>
+      </Reference>
+      <Reference Include="UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <HintPath>..\..\ModuleDLLs\net472\UnityEngine.CoreModule.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
+</Project>
