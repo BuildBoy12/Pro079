@@ -2,7 +2,6 @@
 {
     using Commands;
     using Configs;
-    using Exiled.API.Enums;
     using Exiled.API.Features;
     using Handlers;
     using Logic;
@@ -25,8 +24,8 @@
                 File.Create(Config.TranslationsDirectory).Close();
 
             Singleton = this;
-            Translations = new Translations();
             Manager.LoadTranslations();
+            Translations = new Translations();
             _playerHandlers = new PlayerHandlers();
             _serverHandlers = new ServerHandlers();
             PlayerEvents.ChangingRole += _playerHandlers.OnChangingRole;
@@ -56,8 +55,8 @@
             base.OnDisabled();
         }
 
-        public override string Author => "Build";
-        public override PluginPriority Priority => PluginPriority.First;
-        public override Version Version => new Version(4, 0, 0);
+        public override string Author { get; } = "Build";
+        public override Version RequiredExiledVersion { get; } = new Version(2, 1, 29);
+        public override Version Version { get; } = new Version(4, 0, 0);
     }
 }

@@ -21,7 +21,7 @@ namespace Pro079.Commands
 
             response = Methods.GetHelp();
             if (arguments.Count == 0)
-                return true;
+                return false;
 
             ICommand079 command = Methods.GetCommand(arguments.At(0));
             if (command != null)
